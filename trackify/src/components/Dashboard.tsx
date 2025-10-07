@@ -21,7 +21,7 @@ export function Dashboard({ username, onNavigate, onLogout, onServiceSelect }: D
       description: "Professional 3D printing with PLA/ABS filaments. Perfect for prototypes, models, and custom parts.", 
       price: "₱5/hour + filament",
       gradient: "from-purple-500 to-blue-600",
-      features: ["High precision printing", "Multiple filament types", "Design assistance"]
+      features: ['PLA and ABS materials', 'High precision printing', 'Design assistance']
     },
     { 
       id: "printer", 
@@ -45,7 +45,7 @@ export function Dashboard({ username, onNavigate, onLogout, onServiceSelect }: D
       id: "tools", 
       title: "HARDWARE TOOLS", 
       icon: Wrench, 
-      description: "Complete workshop with precision tools, measuring instruments, and mechanical equipment.", 
+      description: "Complete workshop with precision tools, measuring instruments, and mechanical equitpmen.", 
       price: "₱5/hour",
       gradient: "from-green-500 to-emerald-600",
       features: ["Precision instruments", "Power tools", "Safety gear included"]
@@ -64,30 +64,31 @@ export function Dashboard({ username, onNavigate, onLogout, onServiceSelect }: D
   return (
     <div className="min-h-screen bg-[#2d3748]">
 
-      <div className="flex justify-between items-center p-6 mb-6">
-        <div className="flex items-center">
-          <Image
-              src="/img/logo.svg"
-              alt="Sorsogon Community Innovation Labs"
-              width={32}
-              height={32}
-              className="w-16 h-16 mr-3"
-          />
-          <div className="text-left">
-            <div className="text-white text-2xl font-bold">SORSOGON COMMUNITY</div>
-            <div className="text-[#ff8c00] text-2xl font-bold">INNOVATION LABS</div>
+  <div className="flex flex-col md:flex-row md:justify-between items-center p-5 md:p-6 mb-6 gap-4 md:gap-0">
+        <div className="flex items-center w-full md:w-auto justify-center md:justify-start">
+      <Image
+        src="/img/logo.svg"
+        alt="Sorsogon Community Innovation Labs"
+        width={64}
+        height={64}
+        className="w-12 h-12 md:w-16 md:h-16 mr-3"
+      />
+          <div className="text-center md:text-left">
+            <div className="text-white text-lg md:text-2xl font-bold">SORSOGON COMMUNITY</div>
+            <div className="text-[#ff8c00] text-lg md:text-2xl font-bold">INNOVATION LABS</div>
           </div>
         </div>
         
-        {/* User Info and Logout - Top Right */}
-        <div className="flex items-center gap-4">
-          <div className="text-right">
+        {/* User Info and Logout - Top Right (responsive) */}
+        <div className="flex flex-col md:flex-row items-center gap-3 md:gap-4 w-full md:w-auto">
+          <div className="text-center md:text-right">
             <div className="text-white text-sm">Welcome back,</div>
             <div className="text-[#ff8c00] font-semibold">{username || 'Guest User'}</div>
           </div>
           <Button 
             onClick={onLogout}
-            className="bg-[#ff8c00] hover:bg-[#e67e00] text-white rounded-md px-6 py-2 font-medium transition-colors"
+            aria-label="Logout"
+            className="bg-[#ff8c00] hover:bg-[#e67e00] text-white rounded-md px-6 py-3 md:py-2 font-medium transition-colors w-full md:w-auto focus:outline-none focus:ring-2 focus:ring-[#ff8c00]/60"
           >
             Logout
           </Button>
@@ -127,12 +128,12 @@ export function Dashboard({ username, onNavigate, onLogout, onServiceSelect }: D
                           {/* Icon Header with Gradient */}
                           <div className={`bg-gradient-to-r ${service.gradient} p-4 relative overflow-hidden`}>
                             <div className="absolute inset-0 bg-black/20"></div>
-                            <div className="relative z-10 flex flex-col items-center">
+                            <div className="relative z-10 flex flex-row gap-5 items-center">
                               <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mb-2 
                                             group-hover:scale-110 transition-transform duration-300">
                                 <IconComponent className="w-6 h-6 text-white" />
                               </div>
-                              <h3 className="text-white font-bold text-xs text-center leading-tight">
+                              <h3 className="text-white font-bold text-md text-center leading-tight">
                                 {service.title}
                               </h3>
                             </div>
@@ -143,22 +144,22 @@ export function Dashboard({ username, onNavigate, onLogout, onServiceSelect }: D
                           
                           {/* Content Section */}
                           <div className="p-4 flex flex-col flex-grow">
-                            <p className="text-gray-300 text-xs mb-3 leading-relaxed flex-grow">
-                              {service.description.length > 60 
+                            <p className="text-gray-300 text-start text-xs mb-3 leading-relaxed flex-grow">
+                              {/* {service.description.length > 60 
                                 ? service.description.substring(0, 60) + "..."
-                                : service.description}
+                                : service.description} */}
+                                { service.description}
                             </p>
                             
                             {/* Features */}
                             <div className="mb-3 min-h-[32px]">
-                              {service.features.slice(0, 2).map((feature, idx) => (
+                              {service.features.map((feature, idx) => (
                                 <div key={idx} className="flex items-center gap-2 mb-1">
                                   <div className="w-1.5 h-1.5 bg-[#ff8c00] rounded-full"></div>
                                   <span className="text-gray-400 text-xs truncate">{feature}</span>
                                 </div>
                               ))}
                             </div>
-                            
                             {/* Price */}
                             <div className="flex items-center justify-between mt-auto">
                               <div className="text-[#ff8c00] font-bold text-sm">
@@ -192,22 +193,7 @@ export function Dashboard({ username, onNavigate, onLogout, onServiceSelect }: D
             >
               OUR PORTAL
             </Button>
-            <Button 
-              onClick={() => onNavigate('reports')}
-              className="bg-gradient-to-r from-[#4a5568] to-[#5a6578] hover:from-[#5a6578] hover:to-[#6a7588] 
-                         text-white border-0 rounded-lg h-14 font-semibold transition-all duration-300 
-                         hover:shadow-lg hover:shadow-green-500/20 hover:scale-105"
-            >
-              MEMORY
-            </Button>
-            <Button 
-              onClick={() => onNavigate('payments')}
-              className="bg-gradient-to-r from-[#ff8c00] to-[#e67e00] hover:from-[#e67e00] hover:to-[#d67300] 
-                         text-white border-0 rounded-lg h-14 font-semibold transition-all duration-300 
-                         hover:shadow-lg hover:shadow-orange-500/30 hover:scale-105"
-            >
-              PAYMENT
-            </Button>
+
             <Button 
               onClick={() => onNavigate('community')}
               className="bg-gradient-to-r from-[#4a5568] to-[#5a6578] hover:from-[#5a6578] hover:to-[#6a7588] 
@@ -216,6 +202,7 @@ export function Dashboard({ username, onNavigate, onLogout, onServiceSelect }: D
             >
               COMMUNITY
             </Button>
+
             <Button 
               onClick={() => onNavigate('admin')}
               className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 
@@ -224,6 +211,25 @@ export function Dashboard({ username, onNavigate, onLogout, onServiceSelect }: D
             >
               ADMIN
             </Button>
+
+            <Button 
+              onClick={() => onNavigate('reports')}
+              className="bg-gradient-to-r from-[#4a5568] to-[#5a6578] hover:from-[#5a6578] hover:to-[#6a7588] 
+                         text-white border-0 rounded-lg h-14 font-semibold transition-all duration-300 
+                         hover:shadow-lg hover:shadow-green-500/20 hover:scale-105"
+            >
+              MEMORY
+            </Button>
+
+            <Button 
+              onClick={() => onNavigate('payments')}
+              className="bg-gradient-to-r from-[#ff8c00] to-[#e67e00] hover:from-[#e67e00] hover:to-[#d67300] 
+                         text-white border-0 rounded-lg h-14 font-semibold transition-all duration-300 
+                         hover:shadow-lg hover:shadow-orange-500/30 hover:scale-105"
+            >
+              PAYMENT
+            </Button>
+            
           </div>
         </div>
       </div>

@@ -2,11 +2,12 @@ import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { ArrowLeft, Clock, DollarSign, Info } from 'lucide-react';
 import Image from "next/image";
+import { Printer, FileText, Zap, Wrench, Microchip, LucideIcon } from 'lucide-react';
 
 interface ServicePreviewProps {
   serviceId: string;
   onBack: () => void;
-  onCheckout: () => void;
+  onCheckout: (serviceId?: string) => void;
 }
 
 export function ServicePreview({ serviceId, onBack, onCheckout }: ServicePreviewProps) {
@@ -14,9 +15,9 @@ export function ServicePreview({ serviceId, onBack, onCheckout }: ServicePreview
     '3d-printer': {
       title: '3D PRINTER',
       icon: '🖨️',
-      basePrice: 15,
+      basePrice: 5,
       unit: 'hour',
-      description: 'High-quality 3D printing services with various materials available.',
+      description: 'Professional 3D printing with PLA/ABS filaments. Perfect for prototypes, models, and custom parts.',
       features: ['PLA and ABS materials', 'High precision printing', 'Design assistance'],
       estimatedTime: '2-6 hours',
       additionalCosts: [
@@ -28,10 +29,10 @@ export function ServicePreview({ serviceId, onBack, onCheckout }: ServicePreview
     'printer': {
       title: 'PRINTER',
       icon: '🖨',
-      basePrice: 0.5,
+      basePrice: 2,
       unit: 'page',
-      description: 'Professional document printing services with various paper options.',
-      features: ['Color and B&W printing', 'Multiple paper sizes', 'High-quality output'],
+      description: 'High-quality document printing, scanning, and copying services for all your paper needs.',
+      features: ["Color & B&W printing", "Various paper sizes", "Fast processing"],
       estimatedTime: '5-15 minutes',
       additionalCosts: [
         { item: 'Color Printing', price: 0.75, unit: 'page' },
@@ -44,8 +45,8 @@ export function ServicePreview({ serviceId, onBack, onCheckout }: ServicePreview
       icon: '🔧',
       basePrice: 10,
       unit: 'hour',
-      description: 'Professional soldering station with safety equipment and guidance.',
-      features: ['Temperature-controlled iron', 'Safety equipment provided', 'Expert guidance'],
+      description: 'Professional electronic soldering and repair station with temperature control and safety equipment.',
+      features: ["Temperature control", "Safety equipment", "Component library"],
       estimatedTime: '1-4 hours',
       additionalCosts: [
         { item: 'Solder Wire', price: 3, unit: 'roll' },
@@ -54,12 +55,12 @@ export function ServicePreview({ serviceId, onBack, onCheckout }: ServicePreview
       ]
     },
     'tools': {
-      title: 'TOOLS',
+      title: 'HARDWARE TOOLS',
       icon: '🛠️',
       basePrice: 5,
       unit: 'hour',
-      description: 'Access to various hardware tools for your projects.',
-      features: ['Screwdrivers and wrenches', 'Measurement tools', 'Safety equipment'],
+      description: 'Complete workshop with precision tools, measuring instruments, and mechanical equitpmen.',
+      features: ["Precision instruments", "Power tools", "Safety gear included"],
       estimatedTime: '1-8 hours',
       additionalCosts: [
         { item: 'Drill Bits Set', price: 3, unit: 'set' },
@@ -70,10 +71,10 @@ export function ServicePreview({ serviceId, onBack, onCheckout }: ServicePreview
     'components': {
       title: 'COMPONENTS',
       icon: '⚡',
-      basePrice: 2,
+      basePrice: 50,
       unit: 'piece',
       description: 'Arduino boards, sensors, and electronic components for your projects.',
-      features: ['Arduino boards', 'Sensors and modules', 'Basic electronic components'],
+      features: ["Arduino ecosystem", "Sensors & modules", "Project guidance"],
       estimatedTime: 'Immediate',
       additionalCosts: [
         { item: 'Arduino Uno', price: 25, unit: 'board' },
@@ -84,6 +85,14 @@ export function ServicePreview({ serviceId, onBack, onCheckout }: ServicePreview
   };
 
   const service = serviceDetails[serviceId as keyof typeof serviceDetails];
+
+  const iconMap: Record<string, LucideIcon | undefined> = {
+    '3d-printer': Printer,
+    'printer': FileText,
+    'soldering': Wrench,
+    'tools': Zap,
+    'components': Microchip,
+  };
 
   if (!service) {
     return <div>Service not found</div>;
@@ -123,7 +132,16 @@ export function ServicePreview({ serviceId, onBack, onCheckout }: ServicePreview
           <Card className="bg-[#4a5568] border-gray-600">
             <CardHeader>
               <CardTitle className="flex items-center text-white">
-                <span className="text-3xl mr-3">{service.icon}</span>
+                {/* Icon container styled like dashboard */}
+                <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mb-2 group-hover:scale-110 transition-transform duration-300 mr-3">
+                  {(() => {
+                    const IconComponent = iconMap[serviceId];
+                    if (IconComponent) {
+                      return <IconComponent className="w-6 h-6 text-white" />;
+                    }
+                    return <span className="text-2xl">{service.icon}</span>;
+                  })()}
+                </div>
                 {service.title}
               </CardTitle>
             </CardHeader>
@@ -185,7 +203,7 @@ export function ServicePreview({ serviceId, onBack, onCheckout }: ServicePreview
 
               <div className="border-t border-gray-600 pt-4">
                 <Button 
-                  onClick={onCheckout}
+                  onClick={() => onCheckout(serviceId)}
                   className="w-full bg-[#ff8c00] hover:bg-[#e67e00] text-white rounded-md h-12"
                 >
                   Proceed to Checkout

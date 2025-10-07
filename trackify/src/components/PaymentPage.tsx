@@ -11,10 +11,12 @@ import { SimpleDonationForm } from './SimpleDonationForm';
 
 interface PaymentPageProps {
   onBack: () => void;
+  // optional initial selected service so callers can deep-link directly to a form
+  initialService?: PaymentServiceType | 'donation' | null;
 }
 
-export function PaymentPage({ onBack }: PaymentPageProps) {
-  const [selectedService, setSelectedService] = useState<PaymentServiceType | 'donation' | null>(null);
+export function PaymentPage({ onBack, initialService }: PaymentPageProps) {
+  const [selectedService, setSelectedService] = useState<PaymentServiceType | 'donation' | null>(initialService ?? null);
 
   const services = [
     {
@@ -109,7 +111,7 @@ export function PaymentPage({ onBack }: PaymentPageProps) {
       </div>
 
       {/* Back Button */}
-      <div className="max-w-4xl mx-auto px-6 mb-8">
+      <div className="max-w-7xl mx-auto px-6 mb-8">
         <Button
           onClick={onBack}
           className="bg-transparent hover:bg-[#4a5568] text-white border border-gray-600 rounded-md flex items-center gap-2"
@@ -120,23 +122,23 @@ export function PaymentPage({ onBack }: PaymentPageProps) {
       </div>
 
       {/* Service Selection */}
-      <div className="max-w-4xl mx-auto px-6">
-        <div className="text-center mb-12">
+      <div className="max-w-9xl mx-auto px-8">
+        <div className="text-center mb-10">
           <h1 className="text-white text-3xl font-bold mb-4">Select Payment Service</h1>
           <p className="text-gray-300 text-lg">Choose what you&apos;d like to pay for</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
           {services.map((service) => {
             const IconComponent = service.icon;
             return (
               <Card
                 key={service.id}
-                className="bg-[#4a5568] border-gray-600 cursor-pointer hover:bg-[#5a6578] transition-all transform hover:scale-105 h-64"
+                className="bg-[#4a5568] border-gray-600 cursor-pointer hover:bg-[#5a6578] transition-all transform hover:scale-105 h-62"
                 onClick={() => handleServiceSelect(service.id)}
               >
                 <CardContent className="p-6 text-center h-full flex flex-col">
-                  <div className={`w-16 h-16 ${service.color} rounded-full flex items-center justify-center mx-auto mb-4 transition-colors`}>
+                  <div className={`w-16 p-4 h-16 ${service.color} rounded-full flex items-center justify-center mx-auto mb-4 transition-colors`}>
                     <IconComponent className="w-8 h-8 text-white" />
                   </div>
                   
@@ -144,11 +146,21 @@ export function PaymentPage({ onBack }: PaymentPageProps) {
                     {service.title}
                   </h3>
                   
-                  <p className="text-gray-300 text-sm mb-4 flex-grow">
-                    {service.description.length > 50 
-                      ? service.description.substring(0, 50) + "..."
+                  <p
+                    className="text-gray-300 text-sm mb-4 flex-grow relative group cursor-default"
+                  >
+                    {service.description.length > 50
+                      ? (
+                        <>
+                          {service.description.substring(0, 50) + "..."}
+                          <span className="absolute bottom-full left-0 mb-1 hidden group-hover:block bg-gray-800 text-white text-xs rounded px-2 py-1 w-48">
+                            {service.description}
+                          </span>
+                        </>
+                      )
                       : service.description}
                   </p>
+
                   
                   <div className="text-[#ff8c00] font-semibold mt-auto">
                     {service.basePrice}
@@ -160,8 +172,8 @@ export function PaymentPage({ onBack }: PaymentPageProps) {
         </div>
 
         {/* Additional Info */}
-        <div className="mt-12 text-center">
-          <div className="bg-[#4a5568] rounded-lg p-6 border border-gray-600 max-w-2xl mx-auto">
+        <div className="mt-5 text-center">
+          <div className="rounded-lg p-6 max-w-2xl mx-auto">
             <h3 className="text-white text-lg font-semibold mb-3">Payment Information</h3>
             <div className="text-gray-300 text-sm space-y-2">
               <p>• All transactions are recorded with timestamps</p>
@@ -170,6 +182,8 @@ export function PaymentPage({ onBack }: PaymentPageProps) {
             </div>
           </div>
         </div>
+
+
       </div>
     </div>
   );

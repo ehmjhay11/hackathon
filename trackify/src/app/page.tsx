@@ -1,6 +1,7 @@
 "use client"
 import { useState } from 'react';
 import { Dashboard } from '@/components/Dashboard';
+import { PaymentServiceType } from '@/types';
 import { DonationForm } from '@/components/DonationForm';
 import { PaymentPage } from '@/components/PaymentPage';
 import { ReportsSection } from '@/components/ReportSection';
@@ -14,6 +15,14 @@ export default function App() {
   const [currentSection, setCurrentSection] = useState<AppSection>('dashboard');
   const [currentUser, setCurrentUser] = useState<string>('');
   const [selectedService, setSelectedService] = useState<string>('');
+  // map dashboard service ids to PaymentServiceType used by PaymentPage
+  const serviceToPaymentMap: Record<string, string> = {
+    '3d-printer': '3d-printer',
+    'printer': 'components', // document printer goes to components (purchase) or tools flow
+    'soldering': 'soldering-station',
+    'tools': 'tools',
+    'components': 'components'
+  };
 
   const handleLogout = () => {
     setCurrentUser('');
@@ -33,7 +42,11 @@ export default function App() {
     setCurrentSection('service-preview');
   };
 
-  const handleCheckout = () => {
+  const handleCheckout = (serviceId?: string) => {
+    if (serviceId) {
+      // store desired service in selectedService so we can pass to PaymentPage
+      setSelectedService(serviceId);
+    }
     setCurrentSection('payments');
   };
 
@@ -53,13 +66,15 @@ export default function App() {
         <ServicePreview
           serviceId={selectedService}
           onBack={handleBackToDashboard}
-          onCheckout={handleCheckout}
+          onCheckout={(id?: string) => handleCheckout(id ?? selectedService)}
         />
       );
     case 'donations':
       return <DonationForm onBack={handleBackToDashboard} />;
     case 'payments':
-      return <PaymentPage onBack={handleBackToDashboard} />;
+      // translate selectedService to PaymentServiceType or 'donation'
+  const mapped = (serviceToPaymentMap[selectedService] ?? (selectedService === 'donation' ? 'donation' : undefined)) as PaymentServiceType | 'donation' | undefined;
+  return <PaymentPage onBack={handleBackToDashboard} initialService={mapped} />;
     case 'reports':
       return <ReportsSection onBack={handleBackToDashboard} />;
     case 'admin':

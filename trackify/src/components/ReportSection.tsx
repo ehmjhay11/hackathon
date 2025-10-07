@@ -23,15 +23,19 @@ export function ReportsSection({ onBack }: ReportsSectionProps) {
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center">
-            <Button
-              variant="ghost"
-              onClick={onBack}
-              className="mr-4 text-white hover:text-[#ff8c00] hover:bg-transparent"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Dashboard
-            </Button>
-            <div className="flex items-center">
+            <div className="max-w-4xl mx-auto px-6 mb-8">
+              <Button
+                onClick={onBack}
+                className="bg-transparent hover:bg-[#4a5568] text-white border border-gray-600 rounded-md flex items-center gap-2"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Back to Dashboard
+              </Button>
+            </div>
+            
+          </div>
+          
+          <div className="flex items-center">
               <Image
                 src="/img/logo.svg"
                 alt="Sorsogon Community Innovation Labs"
@@ -40,14 +44,9 @@ export function ReportsSection({ onBack }: ReportsSectionProps) {
                 className="w-8 h-8 mr-3"
                 />
               <div className="text-left">
-                <div className="text-white text-sm">SORSOGON COMMUNITY LABS</div>
+                <div className="text-white text-sm">SORSOGON COMMUNITY INNOVATION LABS</div>
               </div>
             </div>
-          </div>
-          
-          <div className="bg-[#4a5568] px-4 py-2 rounded">
-            <span className="text-white text-sm">Reports Section</span>
-          </div>
         </div>
 
         {/* Weekly Report Table */}
