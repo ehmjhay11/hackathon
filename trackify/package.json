@@ -2,16 +2,23 @@
   "name": "trackify",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test:db": "node scripts/test-db-simple.cjs",
+    "init:data": "node scripts/init-simple.cjs",
+    "migrate:collections": "node scripts/migrate-db.cjs",
+    "db:help": "node scripts/db-help.js"
   },
   "dependencies": {
     "react": "19.1.0",
     "react-dom": "19.1.0",
-    "next": "15.5.4"
+    "next": "15.5.4",
+    "mongoose": "^8.0.0",
+    "dotenv": "^16.0.0"
   },
   "devDependencies": {
     "typescript": "^5",
