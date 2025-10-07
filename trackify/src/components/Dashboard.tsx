@@ -44,7 +44,7 @@ export function Dashboard({ username, onNavigate, onLogout, onServiceSelect }: D
         {/* Header */}
         <div className="text-center mb-12">
           
-          <div className="text-white mb-8 font-bold text-2xl sm:text-4xl">TOOL SERVICES</div>
+          <div className="text-white mb-8 font-bold text-2xl sm:text-4xl uppercase">TOOLS / SERVICES</div>
           
           {/* Service Cards Slider */}
           <div className="mb-8">
