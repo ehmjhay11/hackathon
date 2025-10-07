@@ -33,7 +33,7 @@ export function ReportsSection({ onBack }: ReportsSectionProps) {
             </Button>
             <div className="flex items-center">
               <Image
-                src="/img/logo.png"
+                src="/img/logo.svg"
                 alt="Sorsogon Community Innovation Labs"
                 width={32}
                 height={32}

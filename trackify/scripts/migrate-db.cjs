@@ -37,7 +37,6 @@ async function migrateCollections() {
       try {
         // Check if old collection exists
         const oldExists = collections.some(col => col.name === oldName);
-        const newExists = collections.some(col => col.name === newName);
 
         if (oldExists && oldName !== newName) {
           console.log(`\n📦 Migrating ${oldName} → ${newName}`);

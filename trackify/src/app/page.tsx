@@ -6,26 +6,18 @@ import { PaymentPage } from '@/components/PaymentPage';
 import { ReportsSection } from '@/components/ReportSection';
 import { AdminPanel } from '@/components/AdminPanel';
 import { ServicePreview } from '@/components/ServicePreview';
+import { LoginPage } from '@/components/LoginPage';
 
-type AppSection = 'login' | 'dashboard' | 'donations' | 'payments' | 'reports' | 'admin' | 'service-preview';
+type AppSection = 'login' | 'dashboard' | 'donations' | 'payments' | 'reports' | 'admin' | 'service-preview' | 'community';
 
 export default function App() {
   const [currentSection, setCurrentSection] = useState<AppSection>('dashboard');
   const [currentUser, setCurrentUser] = useState<string>('');
   const [selectedService, setSelectedService] = useState<string>('');
 
-  const handleLogin = (username: string) => {
-    setCurrentUser(username);
-    setCurrentSection('dashboard');
-  };
-
   const handleLogout = () => {
     setCurrentUser('');
     setCurrentSection('dashboard'); // Return to public dashboard instead of login
-  };
-
-  const handleShowLogin = () => {
-    setCurrentSection('login');
   };
 
   const handleNavigate = (section: string) => {
@@ -72,6 +64,8 @@ export default function App() {
       return <ReportsSection onBack={handleBackToDashboard} />;
     case 'admin':
       return <AdminPanel onBack={handleBackToDashboard} />;
+    case 'community':
+      return <LoginPage onBack={handleBackToDashboard} onLogin={setCurrentUser} />;
     default:
       return (
         <Dashboard
