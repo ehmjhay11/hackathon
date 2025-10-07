@@ -86,13 +86,7 @@ export function Dashboard({ username, onNavigate, onLogout, onServiceSelect }: D
               onClick={() => onNavigate('donations')}
               className="bg-[#4a5568] hover:bg-[#5a6578] text-white border-0 rounded-md h-12"
             >
-              OUR PORTAL
-            </Button>
-            <Button 
-              onClick={() => onNavigate('reports')}
-              className="bg-[#4a5568] hover:bg-[#5a6578] text-white border-0 rounded-md h-12"
-            >
-              MEMORY
+              DONATION
             </Button>
             <Button 
               onClick={() => onNavigate('payments')}
@@ -105,6 +99,12 @@ export function Dashboard({ username, onNavigate, onLogout, onServiceSelect }: D
               className="bg-[#4a5568] hover:bg-[#5a6578] text-white border-0 rounded-md h-12"
             >
               COMMUNITY
+            </Button>
+            <Button 
+              onClick={() => onNavigate('reports')}
+              className="bg-[#4a5568] hover:bg-[#5a6578] text-white border-0 rounded-md h-12"
+            >
+              REPORTS
             </Button>
           </div>
         </div>
