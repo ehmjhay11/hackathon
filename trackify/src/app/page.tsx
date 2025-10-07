@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Dashboard } from '@/components/Dashboard';
 import { DonationForm } from '@/components/DonationForm';
 import { PaymentPage } from '@/components/PaymentPage';
-import { ReportsSection } from '@/components/ReportSection';
+import { ReportSection } from '@/components/ReportSection';
 import { AdminPanel } from '@/components/AdminPanel';
 import { ServicePreview } from '@/components/ServicePreview';
 
@@ -53,6 +53,7 @@ export default function App() {
           username={currentUser}
           onNavigate={handleNavigate}
           onLogout={handleLogout}
+          onShowLogin={handleShowLogin}
           onServiceSelect={handleServiceSelect} // important!
         />
       );
@@ -69,7 +70,7 @@ export default function App() {
     case 'payments':
       return <PaymentPage onBack={handleBackToDashboard} />;
     case 'reports':
-      return <ReportsSection onBack={handleBackToDashboard} />;
+      return <ReportSection onBack={handleBackToDashboard} />;
     case 'admin':
       return <AdminPanel onBack={handleBackToDashboard} />;
     default:
@@ -78,6 +79,7 @@ export default function App() {
           username={currentUser}
           onNavigate={handleNavigate}
           onLogout={handleLogout}
+          onShowLogin={handleShowLogin}
           onServiceSelect={handleServiceSelect} // important!
         />
       );
