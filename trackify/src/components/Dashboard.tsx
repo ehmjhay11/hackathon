@@ -2,6 +2,9 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from './ui/card';
 import Image from "next/image";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from './ui/carousel';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPrint, faWrench, faTools, faCube, faGear} from "@fortawesome/free-solid-svg-icons";
+
 
 interface DashboardProps {
   username: string;
@@ -13,15 +16,15 @@ interface DashboardProps {
 export function Dashboard({ username, onNavigate, onLogout, onServiceSelect }: DashboardProps) {
   
   const services = [
-    { id: "3d-printer", title: "3D PRINTER", image: "🖨️", description: "3D printing services", price: "$15/hour" },
-    { id: "printer", title: "PRINTER", image: "🖨", description: "Document printing", price: "$0.50/page" },
-    { id: "soldering", title: "SOLDERING", image: "🔧", description: "Electronic soldering station", price: "$10/hour" },
-    { id: "tools", title: "TOOLS", image: "🛠️", description: "Hardware tools rental", price: "$5/hour" },
-    { id: "components", title: "COMPONENTS", image: "⚡", description: "Arduino and electronic components", price: "$2-50/piece" }
+    { id: "3d-printer", title: "3D PRINTER", icon: faCube, description: "3D printing services", price: "$15/hour" },
+    { id: "printer", title: "PRINTER", icon: faPrint, description: "Document printing", price: "$0.50/page" },
+    { id: "soldering", title: "SOLDERING", icon: faWrench, description: "Electronic soldering station", price: "$10/hour" },
+    { id: "tools", title: "TOOLS", icon: faTools, description: "Hardware tools rental", price: "$5/hour" },
+    { id: "components", title: "COMPONENTS", icon: faGear, description: "Arduino and electronic components", price: "$2-50/piece" },
   ];
 
   return (
-    <div className="min-h-screen bg-[#2d3748]">
+    <div className="min-h-screen bg-[#2d3748] p-4">
 
       <div className="flex p-6 mb-6">
         <Image
@@ -29,11 +32,11 @@ export function Dashboard({ username, onNavigate, onLogout, onServiceSelect }: D
             alt="Sorsogon Community Innovation Labs"
             width={32}
             height={32}
-            className="w-16 h-16 mr-3"
+            className="w-12 h-12 md:w-16 md:h-16 mr-3"
         />
         <div className="text-left">
-          <div className="text-white text-2xl font-bold">SORSOGON COMMUNITY</div>
-          <div className="text-[#ff8c00] text-2xl font-bold">INNOVATION LABS</div>
+          <div className="text-white text-sm  md:text-2xl font-bold">SORSOGON COMMUNITY</div>
+          <div className="text-[#ff8c00] text-lg md:text-2xl font-bold">INNOVATION LABS</div>
         </div>
       </div>
 
@@ -41,7 +44,7 @@ export function Dashboard({ username, onNavigate, onLogout, onServiceSelect }: D
         {/* Header */}
         <div className="text-center mb-12">
           
-          <div className="text-white mb-8 font-bold text-2xl">TOOL SERVICES</div>
+          <div className="text-white mb-8 font-bold text-2xl sm:text-4xl">TOOL SERVICES</div>
           
           {/* Service Cards Slider */}
           <div className="mb-8">
@@ -54,8 +57,10 @@ export function Dashboard({ username, onNavigate, onLogout, onServiceSelect }: D
                       onClick={() => onServiceSelect(service.id)}
                     >
                       <CardContent className="p-6 text-center">
-                        <div className="text-4xl mb-4">{service.image}</div>
-                        <div className="text-white text-sm mb-2">{service.title}</div>
+                        <div className="text-6xl sm:text-7xl mb-4 text-white">
+                          <FontAwesomeIcon icon={service.icon} />
+                        </div>
+                        <div className="text-white text-2xl font-bold tracking-wider mb-2">{service.title}</div>
                         <div className="text-gray-300 text-xs mb-2">{service.description}</div>
                         <div className="text-[#ff8c00] text-xs">{service.price}</div>
                       </CardContent>

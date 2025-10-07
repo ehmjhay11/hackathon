@@ -2,6 +2,8 @@ import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { ArrowLeft, Clock, DollarSign, Info } from 'lucide-react';
 import Image from "next/image";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faPrint, faWrench, faTools, faCube, faGear} from "@fortawesome/free-solid-svg-icons";
 
 interface ServicePreviewProps {
   serviceId: string;
@@ -13,7 +15,7 @@ export function ServicePreview({ serviceId, onBack, onCheckout }: ServicePreview
   const serviceDetails = {
     '3d-printer': {
       title: '3D PRINTER',
-      icon: '🖨️',
+      icon: faCube,
       basePrice: 15,
       unit: 'hour',
       description: 'High-quality 3D printing services with various materials available.',
@@ -27,7 +29,7 @@ export function ServicePreview({ serviceId, onBack, onCheckout }: ServicePreview
     },
     'printer': {
       title: 'PRINTER',
-      icon: '🖨',
+      icon: faPrint,
       basePrice: 0.5,
       unit: 'page',
       description: 'Professional document printing services with various paper options.',
@@ -41,7 +43,7 @@ export function ServicePreview({ serviceId, onBack, onCheckout }: ServicePreview
     },
     'soldering': {
       title: 'SOLDERING',
-      icon: '🔧',
+      icon: faWrench,
       basePrice: 10,
       unit: 'hour',
       description: 'Professional soldering station with safety equipment and guidance.',
@@ -55,7 +57,7 @@ export function ServicePreview({ serviceId, onBack, onCheckout }: ServicePreview
     },
     'tools': {
       title: 'TOOLS',
-      icon: '🛠️',
+      icon: faTools,
       basePrice: 5,
       unit: 'hour',
       description: 'Access to various hardware tools for your projects.',
@@ -69,7 +71,7 @@ export function ServicePreview({ serviceId, onBack, onCheckout }: ServicePreview
     },
     'components': {
       title: 'COMPONENTS',
-      icon: '⚡',
+      icon: faGear,
       basePrice: 2,
       unit: 'piece',
       description: 'Arduino boards, sensors, and electronic components for your projects.',
@@ -123,13 +125,14 @@ export function ServicePreview({ serviceId, onBack, onCheckout }: ServicePreview
           <Card className="bg-[#4a5568] border-gray-600">
             <CardHeader>
               <CardTitle className="flex items-center text-white">
-                <span className="text-3xl mr-3">{service.icon}</span>
+                <div className="text-3xl mr-3">
+                    <FontAwesomeIcon icon={service.icon} />
+                </div>
                 {service.title}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               <p className="text-gray-300">{service.description}</p>
-              
               <div className="space-y-3">
                 <div className="flex items-center text-white">
                   <DollarSign className="h-4 w-4 mr-2 text-[#ff8c00]" />
