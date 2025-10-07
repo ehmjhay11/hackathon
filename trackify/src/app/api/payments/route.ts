@@ -9,7 +9,7 @@ export async function GET() {
     await connectDB();
     const payments = await Payment.find({});
     return NextResponse.json({ success: true, data: payments });
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Failed to fetch payments:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to fetch payments' },

@@ -25,7 +25,7 @@ export async function GET() {
         dbInfo.collections = collections.map(col => col.name);
         dbInfo.collectionsCount = collections.length;
       }
-    } catch (error) {
+    } catch (error: unknown) {
       dbInfo.collectionsError = error instanceof Error ? error.message : 'Unknown error';
     }
 
