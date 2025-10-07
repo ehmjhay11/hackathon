@@ -99,11 +99,9 @@ export function Dashboard({ username, onNavigate, onLogout, onServiceSelect }: D
         {/* Header */}
         <div className="text-center mb-16">
           <div className="flex items-center justify-center gap-3 mb-4">
-            <Sparkles className="w-8 h-8 text-[#ff8c00]" />
             <h1 className="text-4xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
               TOOL SERVICES
             </h1>
-            <Sparkles className="w-8 h-8 text-[#ff8c00]" />
           </div>
           <p className="text-gray-300 text-lg mb-12 max-w-2xl mx-auto">
             Access professional-grade equipment and tools for your innovation projects. 
@@ -162,7 +160,7 @@ export function Dashboard({ username, onNavigate, onLogout, onServiceSelect }: D
                             </div>
                             {/* Price */}
                             <div className="flex items-center justify-between mt-auto">
-                              <div className="text-[#ff8c00] font-bold text-sm">
+                              <div className="text-[#ff8c00] font-extralight text-sm">
                                 {service.price}
                               </div>
                               <div className="text-xs text-gray-500 group-hover:text-[#ff8c00] transition-colors">
