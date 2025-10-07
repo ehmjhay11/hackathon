@@ -11,10 +11,13 @@ interface DashboardProps {
 }
 
 export function Dashboard({ username, onNavigate, onLogout, onServiceSelect }: DashboardProps) {
+  
   const services = [
-    { title: "TOOL SERVICES", image: "📱", description: "Digital tools and resources" },
-    { title: "MEMORY", image: "💾", description: "Data storage and backup" },
-    { title: "PAYMENT", image: "💳", description: "Financial transactions" }
+    { id: "3d-printer", title: "3D PRINTER", image: "🖨️", description: "3D printing services", price: "$15/hour" },
+    { id: "printer", title: "PRINTER", image: "🖨", description: "Document printing", price: "$0.50/page" },
+    { id: "soldering", title: "SOLDERING", image: "🔧", description: "Electronic soldering station", price: "$10/hour" },
+    { id: "tools", title: "TOOLS", image: "🛠️", description: "Hardware tools rental", price: "$5/hour" },
+    { id: "components", title: "COMPONENTS", image: "⚡", description: "Arduino and electronic components", price: "$2-50/piece" }
   ];
 
   return (
@@ -38,7 +41,7 @@ export function Dashboard({ username, onNavigate, onLogout, onServiceSelect }: D
         {/* Header */}
         <div className="text-center mb-12">
           
-          <div className="text-white text-lg mb-8">TOOL SERVICES</div>
+          <div className="text-white mb-8 font-bold text-2xl">TOOL SERVICES</div>
           
           {/* Service Cards Slider */}
           <div className="mb-8">
