@@ -19,20 +19,22 @@
 
 ## 🎯 Overview
 
-The Trackify backend is a **REST API** built with **Next.js App Router** architecture, providing full CRUD operations for managing:
-- 👥 **Users** - User accounts and authentication
-- 🔧 **Tools** - Tool inventory management
-- 💰 **Payments** - Payment transaction records
-- 🎁 **Donations** - Donation tracking
-- 🛒 **Purchases** - Purchase order management
+The Trackify backend is a **REST API** built with **Next.js App Router** architecture, providing full CRUD operations for makerspace management:
+- 👥 **Users** - User accounts and membership management
+- 🔧 **Tools** - Makerspace equipment inventory and status tracking
+- 💰 **Payments** - Service usage payment records (3D printing, soldering, etc.)
+- 🎁 **Donations** - Donation tracking (monetary and donated items)
+- � **Components** - Electronic components and consumables inventory
 
 ### Key Features:
 - ✅ **TypeScript-first** development with strict typing
 - ✅ **MongoDB** with Mongoose ODM for data persistence
+- ✅ **Auto-generated IDs** with meaningful prefixes (pay_, don_, tool_, comp_, user_)
 - ✅ **Centralized error handling** with consistent response formats
 - ✅ **Connection caching** to optimize database performance
 - ✅ **RESTful API design** following industry standards
 - ✅ **Automatic validation** via Mongoose schemas
+- ✅ **Makerspace-specific models** optimized for real-world usage
 
 ---
 
@@ -60,7 +62,7 @@ trackify/
 │   ├── 📂 tools/            # Tool CRUD operations
 │   ├── 📂 payments/         # Payment CRUD operations
 │   ├── 📂 donations/        # Donation CRUD operations
-│   └── 📂 purchases/        # Purchase CRUD operations
+│   └── 📂 components/       # Component CRUD operations
 ├── 📂 models/               # Mongoose schemas and interfaces
 ├── 📂 lib/                  # Utility libraries
 ├── 📂 scripts/              # Database management scripts
@@ -137,11 +139,11 @@ export function handleMongoError(error: unknown): { status: number; message: str
 
 | Collection | Purpose | Key Fields |
 |------------|---------|------------|
-| `user` | User accounts | `user_id`, `username`, `password` |
-| `tools` | Tool inventory | `tool_id`, `name`, `description`, `price` |
-| `payment` | Payment records | `payment_id`, `user_id`, `amount`, `status` |
-| `donation` | Donations | `donation_id`, `user_id`, `amount`, `cause` |
-| `purchase` | Purchase orders | `purchase_id`, `user_id`, `tool_id`, `quantity` |
+| `user` | User accounts | `user_id`, `username`, `password`, `membershipLevel` |
+| `tools` | Makerspace equipment | `tool_id`, `name`, `status`, `location`, `lastMaintenance` |
+| `payment` | Service payments | `payment_id`, `userId`, `serviceName`, `amount`, `paymentMethod` |
+| `donation` | Donations | `donation_id`, `userId`, `type`, `amount`, `itemDescription` |
+| `component` | Electronic components | `component_id`, `name`, `category`, `quantity`, `storageLocation` |
 
 ### Mongoose Schema Features
 
@@ -240,16 +242,18 @@ Each model follows a consistent pattern with TypeScript interfaces and Mongoose 
 - **Key Features**: Price tracking, description, availability
 
 ### 3. **Payment Model** (`models/Payment.ts`)
-- **Purpose**: Tracks payment transactions and status
-- **Relationships**: Links to users via `user_id`
+- **Purpose**: Tracks service usage payments (3D printer, soldering, etc.)
+- **Relationships**: Links to users via `userId`
 
 ### 4. **Donation Model** (`models/Donation.ts`)
-- **Purpose**: Records charitable donations and causes
-- **Tracking**: Amount, purpose, and donor information
+- **Purpose**: Records monetary donations and donated items
+- **Types**: Supports both monetary donations and physical item donations
+- **Tracking**: Amount (for monetary), item descriptions (for items)
 
-### 5. **Purchase Model** (`models/Purchase.ts`)
-- **Purpose**: Manages purchase orders and transactions
-- **Relationships**: Links users to tools with quantity
+### 5. **Component Model** (`models/Component.ts`)
+- **Purpose**: Manages electronic components and consumables inventory
+- **Features**: Quantity tracking, categorization, storage location management
+- **Usage**: Supports makerspace parts inventory and project supply tracking
 
 ---
 

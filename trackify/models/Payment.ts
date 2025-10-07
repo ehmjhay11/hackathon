@@ -1,29 +1,27 @@
 import mongoose, { Document, Schema } from 'mongoose';
+import { nanoid } from 'nanoid';
 
 export interface IPayment extends Document {
   payment_id: string;
-  name: string;
-  date: Date;
-  tools: string;
+  userId: string;
+  serviceName: string;
   amount: number;
+  paymentMethod: string;
+  timestamp: Date;
 }
 
 const PaymentSchema = new Schema<IPayment>({
   payment_id: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
+    default: () => `pay_${nanoid(8)}`
   },
-  name: {
+  userId: {
     type: String,
     required: true
   },
-  date: {
-    type: Date,
-    required: true,
-    default: Date.now
-  },
-  tools: {
+  serviceName: {
     type: String,
     required: true
   },
@@ -31,6 +29,15 @@ const PaymentSchema = new Schema<IPayment>({
     type: Number,
     required: true,
     min: 0
+  },
+  paymentMethod: {
+    type: String,
+    required: true
+  },
+  timestamp: {
+    type: Date,
+    required: true,
+    default: Date.now
   }
 }, {
   timestamps: true,

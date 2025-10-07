@@ -1,12 +1,13 @@
-# Trackify REST API
+# Trackify Makerspace Management API
 
-A TypeScript-based REST API built with Next.js (App Router), MongoDB, and Mongoose for managing payments, donations, purchases, tools, and users.
+A TypeScript-based REST API built with Next.js (App Router), MongoDB, and Mongoose for managing a makerspace including payments, donations, tools, components, and users.
 
 ## Features
 
 - ✅ **TypeScript** for type safety
 - ✅ **Next.js App Router** for API routes
 - ✅ **MongoDB** with Mongoose ODM
+- ✅ **Auto-generated unique IDs** for all records
 - ✅ **Full CRUD operations** for all collections
 - ✅ **Proper error handling** and validation
 - ✅ **Modular architecture** with reusable components
@@ -45,52 +46,58 @@ The API will be available at `http://localhost:3000/api`
 
 ## Data Models
 
-### Payment
+### Payment (Service Usage)
 ```typescript
 {
-  payment_id: string;    // Unique identifier
-  name: string;          // Payment name
-  date: Date;           // Payment date
-  tools: string;        // Tools involved
-  amount: number;       // Payment amount
+  payment_id: string;    // Auto-generated: "pay_XXXXXXXX"
+  userId: string;        // User who used the service
+  serviceName: string;   // Name of service (e.g., "3D Printer", "Soldering Station")
+  amount: number;        // Payment amount
+  paymentMethod: string; // Payment method used
+  timestamp: Date;       // When payment was made
 }
 ```
 
-### Donation
+### Donation (Monetary & Items)
 ```typescript
 {
-  donation_id: string;   // Unique identifier
-  name?: string;         // Optional donor name
-  date: Date;           // Donation date
-  amount: number;       // Donation amount
-  tool: string;         // Related tool
+  donation_id: string;     // Auto-generated: "don_XXXXXXXX"
+  donorName: string;       // Name of the donor
+  type: 'monetary' | 'item'; // Type of donation
+  amount?: number;         // Amount (required if type is 'monetary')
+  itemDescription?: string; // Description (required if type is 'item')
+  dateReceived: Date;      // When donation was received
 }
 ```
 
-### Purchase
+### Tool (Makerspace Equipment)
 ```typescript
 {
-  purchase_id: string;   // Unique identifier
-  tool_id: string;      // Related tool ID
-  date: Date;           // Purchase date
-  amount: number;       // Purchase amount
+  tool_id: string;         // Auto-generated: "tool_XXXXXXXX"
+  toolName: string;        // Name of the tool
+  description: string;     // Tool description
+  status: 'available' | 'in-use' | 'maintenance' | 'broken';
+  lastMaintenance: Date;   // Last maintenance date
+  location: string;        // Where the tool is located
 }
 ```
 
-### Tool
+### Component (Electronic Parts & Consumables)
 ```typescript
 {
-  tool_id: string;      // Unique identifier
-  name: string;         // Tool name
-  quantity: number;     // Available quantity
-  amount: number;       // Tool price
+  component_id: string;    // Auto-generated: "comp_XXXXXXXX"
+  componentName: string;   // Name of the component
+  category: string;        // Category (e.g., "Resistors", "Capacitors", "Wire")
+  quantity: number;        // Available quantity
+  unit: string;           // Unit of measurement (e.g., "pieces", "meters", "grams")
+  storageLocation: string; // Where the component is stored
 }
 ```
 
 ### User
 ```typescript
 {
-  user_id: string;      // Unique identifier
+  user_id: string;      // Auto-generated: "user_XXXXXXXX"
   username: string;     // Unique username
   password: string;     // User password (excluded from responses)
 }
@@ -122,16 +129,6 @@ All endpoints return JSON with the following structure:
 | PUT | `/api/donations/[id]` | Update donation by donation_id |
 | DELETE | `/api/donations/[id]` | Delete donation by donation_id |
 
-### Purchases
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/purchases` | Get all purchases |
-| GET | `/api/purchases/[id]` | Get purchase by purchase_id |
-| POST | `/api/purchases` | Create new purchase |
-| PUT | `/api/purchases/[id]` | Update purchase by purchase_id |
-| DELETE | `/api/purchases/[id]` | Delete purchase by purchase_id |
-
 ### Tools
 
 | Method | Endpoint | Description |
@@ -141,6 +138,16 @@ All endpoints return JSON with the following structure:
 | POST | `/api/tools` | Create new tool |
 | PUT | `/api/tools/[id]` | Update tool by tool_id |
 | DELETE | `/api/tools/[id]` | Delete tool by tool_id |
+
+### Components
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/components` | Get all components |
+| GET | `/api/components/[id]` | Get component by component_id |
+| POST | `/api/components` | Create new component |
+| PUT | `/api/components/[id]` | Update component by component_id |
+| DELETE | `/api/components/[id]` | Delete component by component_id |
 
 ### Users
 
@@ -154,16 +161,53 @@ All endpoints return JSON with the following structure:
 
 ## Example Usage
 
-### Create a Payment
+## Example Usage
+
+### Create a Service Payment
 ```bash
 curl -X POST http://localhost:3000/api/payments \
   -H "Content-Type: application/json" \
   -d '{
-    "payment_id": "pay_001",
-    "name": "Monthly Tool Subscription",
-    "date": "2025-01-15T10:00:00Z",
-    "tools": "Hammer, Screwdriver",
-    "amount": 150.50
+    "userId": "user_ABC12345",
+    "serviceName": "3D Printer",
+    "amount": 15.50,
+    "paymentMethod": "credit_card"
+  }'
+```
+*Note: `payment_id` will be auto-generated as "pay_XXXXXXXX"*
+
+### Create a Monetary Donation
+```bash
+curl -X POST http://localhost:3000/api/donations \
+  -H "Content-Type: application/json" \
+  -d '{
+    "donorName": "John Doe",
+    "type": "monetary",
+    "amount": 100.00
+  }'
+```
+
+### Create an Item Donation
+```bash
+curl -X POST http://localhost:3000/api/donations \
+  -H "Content-Type: application/json" \
+  -d '{
+    "donorName": "Jane Smith",
+    "type": "item",
+    "itemDescription": "Old laptop with charger"
+  }'
+```
+
+### Create a Component
+```bash
+curl -X POST http://localhost:3000/api/components \
+  -H "Content-Type: application/json" \
+  -d '{
+    "componentName": "Arduino Uno",
+    "category": "Microcontrollers",
+    "quantity": 5,
+    "unit": "pieces",
+    "storageLocation": "Shelf A2"
   }'
 ```
 
@@ -174,23 +218,24 @@ curl http://localhost:3000/api/tools
 
 ### Update a User
 ```bash
-curl -X PUT http://localhost:3000/api/users/user_001 \
+curl -X PUT http://localhost:3000/api/users/user_ABC12345 \
   -H "Content-Type: application/json" \
   -d '{
     "username": "updated_username",
     "password": "new_password"
   }'
 ```
+*Note: Use the auto-generated `user_id` from the create response*
 
 ## Project Structure
 
 ```
 trackify/
 ├── models/
-│   ├── Payment.ts      # Payment model and interface
-│   ├── Donation.ts     # Donation model and interface
-│   ├── Purchase.ts     # Purchase model and interface
-│   ├── Tool.ts         # Tool model and interface
+│   ├── Payment.ts      # Payment model and interface (service payments)
+│   ├── Donation.ts     # Donation model and interface (monetary & items)
+│   ├── Component.ts    # Component model and interface (electronic parts)
+│   ├── Tool.ts         # Tool model and interface (makerspace tools)
 │   └── User.ts         # User model and interface
 ├── lib/
 │   └── mongodb.ts      # Database connection utility
@@ -201,9 +246,9 @@ trackify/
 │   ├── donations/
 │   │   ├── route.ts           # GET, POST /api/donations
 │   │   └── [id]/route.ts      # GET, PUT, DELETE /api/donations/[id]
-│   ├── purchases/
-│   │   ├── route.ts           # GET, POST /api/purchases
-│   │   └── [id]/route.ts      # GET, PUT, DELETE /api/purchases/[id]
+│   ├── components/
+│   │   ├── route.ts           # GET, POST /api/components
+│   │   └── [id]/route.ts      # GET, PUT, DELETE /api/components/[id]
 │   ├── tools/
 │   │   ├── route.ts           # GET, POST /api/tools
 │   │   └── [id]/route.ts      # GET, PUT, DELETE /api/tools/[id]

@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
 
 // GET /api/test/db - Test database connection
@@ -9,14 +9,14 @@ export async function GET() {
     const connection = await connectDB();
     
     // Test database operations
-    const dbInfo: any = {
+    const dbInfo = {
       status: 'connected',
       database: connection.db?.databaseName || 'unknown',
       host: connection.host,
       port: connection.port,
       readyState: connection.readyState,
       timestamp: new Date().toISOString()
-    };
+    } as Record<string, unknown>;
 
     // Try to list collections
     try {

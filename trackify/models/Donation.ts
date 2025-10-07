@@ -1,36 +1,44 @@
 import mongoose, { Document, Schema } from 'mongoose';
+import { nanoid } from 'nanoid';
 
 export interface IDonation extends Document {
   donation_id: string;
-  name?: string;
-  date: Date;
-  amount: number;
-  tool: string;
+  donorName: string;
+  type: 'monetary' | 'item';
+  amount?: number; // Only for monetary donations
+  itemDescription?: string; // Only for item donations
+  dateReceived: Date;
 }
 
 const DonationSchema = new Schema<IDonation>({
   donation_id: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
+    default: () => `don_${nanoid(8)}`
   },
-  name: {
+  donorName: {
     type: String,
-    required: false
+    required: true
   },
-  date: {
-    type: Date,
+  type: {
+    type: String,
     required: true,
-    default: Date.now
+    enum: ['monetary', 'item']
   },
   amount: {
     type: Number,
-    required: true,
+    required: function(this: IDonation) { return this.type === 'monetary'; },
     min: 0
   },
-  tool: {
+  itemDescription: {
     type: String,
-    required: true
+    required: function(this: IDonation) { return this.type === 'item'; }
+  },
+  dateReceived: {
+    type: Date,
+    required: true,
+    default: Date.now
   }
 }, {
   timestamps: true,

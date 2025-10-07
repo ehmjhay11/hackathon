@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
-import Purchase from '@/models/Purchase';
+import Component from '@/models/Component';
 
-// GET /api/purchases/[id] - Get purchase by ID
+// GET /api/components/[id] - Get component by ID
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -10,26 +10,26 @@ export async function GET(
   try {
     await connectDB();
     const { id } = await params;
-    const purchase = await Purchase.findOne({ purchase_id: id });
+    const component = await Component.findOne({ component_id: id });
     
-    if (!purchase) {
+    if (!component) {
       return NextResponse.json(
-        { success: false, error: 'Purchase not found' },
+        { success: false, error: 'Component not found' },
         { status: 404 }
       );
     }
     
-    return NextResponse.json({ success: true, data: purchase });
+    return NextResponse.json({ success: true, data: component });
   } catch (error: unknown) {
-    console.error('Failed to fetch purchase:', error);
+    console.error('Failed to fetch component:', error);
     return NextResponse.json(
-      { success: false, error: 'Failed to fetch purchase' },
+      { success: false, error: 'Failed to fetch component' },
       { status: 500 }
     );
   }
 }
 
-// PUT /api/purchases/[id] - Update purchase by ID
+// PUT /api/components/[id] - Update component by ID
 export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -39,30 +39,30 @@ export async function PUT(
     const body = await request.json();
     const { id } = await params;
     
-    const purchase = await Purchase.findOneAndUpdate(
-      { purchase_id: id },
+    const component = await Component.findOneAndUpdate(
+      { component_id: id },
       body,
       { new: true, runValidators: true }
     );
     
-    if (!purchase) {
+    if (!component) {
       return NextResponse.json(
-        { success: false, error: 'Purchase not found' },
+        { success: false, error: 'Component not found' },
         { status: 404 }
       );
     }
     
-    return NextResponse.json({ success: true, data: purchase });
+    return NextResponse.json({ success: true, data: component });
   } catch (error: unknown) {
-    console.error('Failed to update purchase:', error);
+    console.error('Failed to update component:', error);
     return NextResponse.json(
-      { success: false, error: 'Failed to update purchase' },
+      { success: false, error: 'Failed to update component' },
       { status: 500 }
     );
   }
 }
 
-// DELETE /api/purchases/[id] - Delete purchase by ID
+// DELETE /api/components/[id] - Delete component by ID
 export async function DELETE(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -70,20 +70,20 @@ export async function DELETE(
   try {
     await connectDB();
     const { id } = await params;
-    const purchase = await Purchase.findOneAndDelete({ purchase_id: id });
+    const component = await Component.findOneAndDelete({ component_id: id });
     
-    if (!purchase) {
+    if (!component) {
       return NextResponse.json(
-        { success: false, error: 'Purchase not found' },
+        { success: false, error: 'Component not found' },
         { status: 404 }
       );
     }
     
-    return NextResponse.json({ success: true, data: purchase });
+    return NextResponse.json({ success: true, data: component });
   } catch (error: unknown) {
-    console.error('Failed to delete purchase:', error);
+    console.error('Failed to delete component:', error);
     return NextResponse.json(
-      { success: false, error: 'Failed to delete purchase' },
+      { success: false, error: 'Failed to delete component' },
       { status: 500 }
     );
   }

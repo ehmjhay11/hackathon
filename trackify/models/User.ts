@@ -1,4 +1,5 @@
 import mongoose, { Document, Schema } from 'mongoose';
+import { nanoid } from 'nanoid';
 
 export interface IUser extends Document {
   user_id: string;
@@ -10,7 +11,8 @@ const UserSchema = new Schema<IUser>({
   user_id: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
+    default: () => `user_${nanoid(8)}`
   },
   username: {
     type: String,

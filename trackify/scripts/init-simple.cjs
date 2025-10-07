@@ -38,19 +38,20 @@ const donationSchema = new mongoose.Schema({
   tool: { type: String, required: true }
 }, { timestamps: true, collection: 'donation' });
 
-const purchaseSchema = new mongoose.Schema({
-  purchase_id: { type: String, required: true, unique: true },
-  tool_id: { type: String, required: true },
-  date: { type: Date, required: true, default: Date.now },
-  amount: { type: Number, required: true, min: 0 }
-}, { timestamps: true, collection: 'purchase' });
+// REMOVED: Purchase schema - no longer needed for makerspace management
+// const purchaseSchema = new mongoose.Schema({
+//   purchase_id: { type: String, required: true, unique: true },
+//   tool_id: { type: String, required: true },
+//   date: { type: Date, required: true, default: Date.now },
+//   amount: { type: Number, required: true, min: 0 }
+// }, { timestamps: true, collection: 'purchase' });
 
 // Create models
 const Tool = mongoose.model('Tool', toolSchema, 'tools');
 const User = mongoose.model('User', userSchema, 'user');
 const Payment = mongoose.model('Payment', paymentSchema, 'payment');
 const Donation = mongoose.model('Donation', donationSchema, 'donation');
-const Purchase = mongoose.model('Purchase', purchaseSchema, 'purchase');
+// const Purchase = mongoose.model('Purchase', purchaseSchema, 'purchase'); // REMOVED - No longer needed
 
 async function initializeDatabase() {
   try {
@@ -108,9 +109,9 @@ async function initializeDatabase() {
     const paymentsData = [
       {
         payment_id: 'pay_001',
-        name: 'Tool Purchase - January',
+        name: '3D Printer Service - January',
         date: new Date('2025-01-15'),
-        tools: 'Hammer, Screwdriver Set',
+        tools: '3D Printer (PLA Material)',
         amount: 75.49
       },
       {
@@ -166,35 +167,8 @@ async function initializeDatabase() {
       }
     }
 
-    // Sample Purchases Data
-    console.log('\n🛒 Creating Purchases...');
-    const purchasesData = [
-      {
-        purchase_id: 'pur_001',
-        tool_id: 'tool_001',
-        date: new Date('2025-01-12'),
-        amount: 29.99
-      },
-      {
-        purchase_id: 'pur_002',
-        tool_id: 'tool_002',
-        date: new Date('2025-01-18'),
-        amount: 45.50
-      }
-    ];
-
-    for (const purchase of purchasesData) {
-      try {
-        await Purchase.create(purchase);
-        console.log(`  ✅ Created purchase: ${purchase.purchase_id} - $${purchase.amount}`);
-      } catch (error) {
-        if (error.code === 11000) {
-          console.log(`  ⚠️ Purchase already exists: ${purchase.purchase_id}`);
-        } else {
-          console.log(`  ❌ Error creating purchase:`, error.message);
-        }
-      }
-    }
+    // Sample Purchases Data - REMOVED (no longer needed for makerspace)
+    // Purchases have been replaced with service payments
 
     // Summary
     console.log('\n📊 Database Summary:');
@@ -202,13 +176,13 @@ async function initializeDatabase() {
     const usersCount = await User.countDocuments();
     const paymentsCount = await Payment.countDocuments();
     const donationsCount = await Donation.countDocuments();
-    const purchasesCount = await Purchase.countDocuments();
+    // const purchasesCount = await Purchase.countDocuments(); // REMOVED
 
     console.log(`  🔧 Tools: ${toolsCount} documents`);
     console.log(`  👥 Users: ${usersCount} documents`);
     console.log(`  💰 Payments: ${paymentsCount} documents`);
     console.log(`  🎁 Donations: ${donationsCount} documents`);
-    console.log(`  🛒 Purchases: ${purchasesCount} documents`);
+    // console.log(`  🛒 Purchases: ${purchasesCount} documents`); // REMOVED
 
     console.log('\n🎉 Database initialization completed successfully!');
     console.log('\n🌐 Test your API endpoints:');

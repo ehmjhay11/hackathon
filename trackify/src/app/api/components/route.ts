@@ -1,32 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/mongodb';
-import Purchase from '@/models/Purchase';
+import Component from '@/models/Component';
 import { handleMongoError } from '@/lib/errorHandler';
 
-// GET /api/purchases - Get all purchases
+// GET /api/components - Get all components
 export async function GET() {
   try {
     await connectDB();
-    const purchases = await Purchase.find({});
-    return NextResponse.json({ success: true, data: purchases });
+    const components = await Component.find({});
+    return NextResponse.json({ success: true, data: components });
   } catch (error: unknown) {
-    console.error('Failed to fetch purchases:', error);
+    console.error('Failed to fetch components:', error);
     return NextResponse.json(
-      { success: false, error: 'Failed to fetch purchases' },
+      { success: false, error: 'Failed to fetch components' },
       { status: 500 }
     );
   }
 }
 
-// POST /api/purchases - Create new purchase
+// POST /api/components - Create new component
 export async function POST(request: NextRequest) {
   try {
     await connectDB();
     const body = await request.json();
     
-    const purchase = await Purchase.create(body);
+    const component = await Component.create(body);
     return NextResponse.json(
-      { success: true, data: purchase },
+      { success: true, data: component },
       { status: 201 }
     );
   } catch (error: unknown) {

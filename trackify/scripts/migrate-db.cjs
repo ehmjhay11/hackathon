@@ -26,9 +26,9 @@ async function migrateCollections() {
     const migrationMap = {
       'payments': 'payment',
       'donations': 'donation', 
-      'purchases': 'purchase',
       'users': 'user',
-      'tools': 'tools' // This one stays the same
+      'tools': 'tools', // This one stays the same
+      'components': 'component'
     };
 
     console.log('\n🔄 Starting migration...');
@@ -79,12 +79,12 @@ async function migrateCollections() {
     finalCollections.forEach(col => console.log(`   - ${col.name}`));
 
     console.log('\n🎉 Migration completed!');
-    console.log('\n📝 Collection names now match the schema diagram:');
-    console.log('   💰 payment');
-    console.log('   🎁 donation');
-    console.log('   🛒 purchase');
-    console.log('   🔧 tools');
-    console.log('   👥 user');
+    console.log('\n📝 Collection names now match the makerspace schema:');
+    console.log('   💰 payment   - Service payments');
+    console.log('   🎁 donation  - Monetary/item donations');
+    console.log('   � tools     - Makerspace equipment');
+    console.log('   � component - Electronic components');
+    console.log('   👥 user      - User accounts');
 
     await mongoose.connection.close();
     process.exit(0);

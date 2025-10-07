@@ -1,31 +1,44 @@
 import mongoose, { Document, Schema } from 'mongoose';
+import { nanoid } from 'nanoid';
 
 export interface ITool extends Document {
   tool_id: string;
-  name: string;
-  quantity: number;
-  amount: number;
+  toolName: string;
+  description: string;
+  status: 'available' | 'in-use' | 'maintenance' | 'broken';
+  lastMaintenance: Date;
+  location: string;
 }
 
 const ToolSchema = new Schema<ITool>({
   tool_id: {
     type: String,
     required: true,
-    unique: true
+    unique: true,
+    default: () => `tool_${nanoid(8)}`
   },
-  name: {
+  toolName: {
     type: String,
     required: true
   },
-  quantity: {
-    type: Number,
-    required: true,
-    min: 0
+  description: {
+    type: String,
+    required: true
   },
-  amount: {
-    type: Number,
+  status: {
+    type: String,
     required: true,
-    min: 0
+    enum: ['available', 'in-use', 'maintenance', 'broken'],
+    default: 'available'
+  },
+  lastMaintenance: {
+    type: Date,
+    required: true,
+    default: Date.now
+  },
+  location: {
+    type: String,
+    required: true
   }
 }, {
   timestamps: true,
