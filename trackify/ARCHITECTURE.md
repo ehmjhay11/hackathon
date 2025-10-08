@@ -1,7 +1,7 @@
 # 🏗️ Sorsogon Community Innovation Labs - Architecture Overview
 
 ## 📋 Project Summary
-A comprehensive full-stack web application for managing Innovation Labs services, payments, donations, and community member interactions built with Next.js 15, MongoDB, and TypeScript.
+A comprehensive full-stack web application for managing Innovation Labs services, payments, donations, community member interactions, and administrative operations built with Next.js 15, MongoDB, and TypeScript.
 
 ---
 
@@ -13,12 +13,16 @@ graph TB
         UI[React/Next.js UI Components]
         PAGES[App Router Pages]
         HOOKS[React Hooks & State]
+        ADMIN[Admin Panel Interface]
+        AUTH_UI[Authentication UI]
     end
     
     subgraph "API Layer"
         API[Next.js API Routes]
         AUTH[Authentication API]
         PAYMENTS[Payment APIs]
+        ADMIN_API[Admin Management APIs]
+        INVENTORY[Inventory APIs]
         REPORTS[Reporting APIs]
     end
     
@@ -33,17 +37,29 @@ graph TB
         STORAGE[File Storage]
     end
     
+    subgraph "Security Layer"
+        ADMIN_AUTH[Admin Authentication]
+        SESSION[Session Management]
+        VALIDATION[Data Validation]
+    end
+    
     UI --> API
     PAGES --> UI
     HOOKS --> UI
+    ADMIN --> ADMIN_API
+    AUTH_UI --> AUTH
     API --> MODELS
     AUTH --> MODELS
     PAYMENTS --> MODELS
+    ADMIN_API --> MODELS
+    INVENTORY --> MODELS
     REPORTS --> MODELS
     MODELS --> MONGO
     SCRIPTS --> MONGO
     API --> EMAIL
     API --> STORAGE
+    ADMIN_AUTH --> SESSION
+    VALIDATION --> MODELS
 ```
 
 ---
@@ -59,21 +75,44 @@ src/
 │   ├── layout.tsx         # Root layout
 │   └── api/               # API routes
 │       ├── auth/
+│       │   └── route.ts   # User authentication
 │       ├── payments/
+│       │   └── route.ts   # Payment processing
 │       ├── donations/
-│       └── reports/
+│       │   └── route.ts   # Donation handling
+│       └── admin/         # Administrative APIs
+│           ├── users/
+│           ├── payments/
+│           ├── donations/
+│           ├── inventory/
+│           └── reports/
 ├── components/            # React Components
 │   ├── ui/               # Reusable UI components
+│   │   ├── button.tsx
+│   │   ├── card.tsx
+│   │   ├── input.tsx
+│   │   ├── label.tsx
+│   │   └── select.tsx
 │   ├── payment/          # Payment-specific forms
 │   ├── Dashboard.tsx     # Main dashboard
-│   ├── LoginPage.tsx     # Authentication
+│   ├── LoginPage.tsx     # User authentication
+│   ├── AdminLogin.tsx    # Admin authentication
+│   ├── AdminPanel.tsx    # Complete admin management
 │   ├── PaymentPage.tsx   # Payment services
 │   ├── ServicePreview.tsx # Service details
 │   └── ...
 ├── lib/                  # Utilities & configurations
+│   ├── mongodb.ts        # Database connection
+│   └── adminAuth.ts      # Admin authentication
 ├── models/               # Mongoose schemas
+│   ├── User.ts
+│   ├── Payment.ts
+│   ├── Donation.ts
+│   ├── Tool.ts
+│   └── Component.ts
 ├── types/                # TypeScript definitions
 └── scripts/              # Database utilities
+    └── populate-labs.js  # Lab data population
 ```
 
 ---
@@ -87,6 +126,7 @@ erDiagram
     USERS ||--o{ DONATIONS : makes
     TOOLS ||--o{ PAYMENTS : uses
     COMPONENTS ||--o{ PAYMENTS : uses
+    LABS ||--o{ SERVICES : contains
     
     USERS {
         string user_id PK
@@ -104,7 +144,9 @@ erDiagram
         string service
         number totalCost
         string paymentMethod
+        object serviceDetails
         date timestamp
+        string status
     }
     
     DONATIONS {
@@ -114,35 +156,85 @@ erDiagram
         number amount
         array items
         date timestamp
+        boolean isAnonymous
     }
     
     TOOLS {
         string tool_id PK
         string name
+        string description
         string category
-        number hourlyRate
+        number price
         boolean available
+        string condition
+        date lastMaintenance
+        string location
     }
     
     COMPONENTS {
         string component_id PK
         string name
-        string type
+        string description
+        string category
         number price
         number stock
+        number minStock
+        string supplier
+        date lastUpdated
     }
+    
+    LABS {
+        string lab_id PK
+        string name
+        string description
+        string location
+        array equipment
+        array services
+        object hours
+        array contact
+    }
+```
+        string donorName
+        string donationType
+        number amount
 ```
 
 ### **Data Models**
 1. **Users Collection** - Community member authentication & profiles
-2. **Payments Collection** - Service payment transactions
+2. **Payments Collection** - Service payment transactions  
 3. **Donations Collection** - Monetary & item donations
 4. **Tools Collection** - Available hardware tools & equipment
 5. **Components Collection** - Electronic components & parts inventory
+6. **Labs Collection** - Innovation lab locations & information
 
 ---
 
-## 🔧 Service Architecture
+## 🔧 API Architecture
+
+### **Core API Endpoints**
+
+#### **Public APIs**
+- `POST /api/auth` - User authentication & login
+- `GET /api/labs` - Lab information & services
+- `POST /api/payments` - Process service payments
+- `POST /api/donations` - Handle donations
+
+#### **Admin APIs (Requires Authentication)**
+- `GET/POST/PUT/DELETE /api/admin/users` - User management
+- `GET/POST/PUT/DELETE /api/admin/payments` - Payment analytics & management
+- `GET/POST/PUT/DELETE /api/admin/donations` - Donation tracking & management
+- `GET/POST/PUT/DELETE /api/admin/inventory` - Tools & components inventory
+- `GET /api/admin/reports` - System reports & analytics
+
+#### **Authentication System**
+- **User Authentication**: Username/email and password
+- **Admin Authentication**: Restricted to `admin_sorsogon` with `admin@sorsogonlabs.gov.ph`
+- **Session Management**: Browser-based session storage
+- **Access Control**: Role-based permissions for admin functions
+
+---
+
+## �️ Service Architecture
 
 ### **Core Services**
 ```mermaid
@@ -194,7 +286,7 @@ graph LR
 
 ## 🔐 Authentication & Authorization
 
-### **Authentication Flow**
+### **User Authentication Flow**
 ```mermaid
 sequenceDiagram
     participant U as User
@@ -206,6 +298,41 @@ sequenceDiagram
     U->>L: Enter credentials
     L->>A: POST /api/auth/login
     A->>DB: Query user by email
+    DB-->>A: Return user data
+    A-->>L: Authentication result
+    L-->>D: Redirect to dashboard
+    D->>U: Display personalized content
+```
+
+### **Admin Authentication Flow**
+```mermaid
+sequenceDiagram
+    participant A as Admin
+    participant AL as AdminLogin
+    participant Auth as AdminAuth
+    participant AP as AdminPanel
+    
+    A->>AL: Click Admin button
+    AL->>A: Show login modal
+    A->>AL: Enter admin credentials
+    AL->>Auth: Validate credentials
+    Auth-->>AL: Check against hardcoded admin
+    alt Valid Admin
+        Auth-->>AL: Success
+        AL-->>AP: Open admin panel
+        AP->>A: Show admin interface
+    else Invalid Credentials
+        Auth-->>AL: Error
+        AL->>A: Show error message
+    end
+```
+
+### **Authorization Levels**
+1. **Public Access**: Lab information, service previews
+2. **User Access**: Service payments, donation submissions
+3. **Admin Access**: Complete system management (restricted to `admin_sorsogon`)
+
+---
     DB->>A: Return user data
     A->>A: Validate password
     A->>L: Return auth response
@@ -221,7 +348,85 @@ sequenceDiagram
 
 ---
 
-## 💳 Payment Processing Architecture
+## � Admin Panel Architecture
+
+### **Admin Panel Features**
+```mermaid
+graph TB
+    subgraph "Admin Dashboard"
+        OV[Overview Dashboard]
+        UM[User Management]
+        PM[Payment Management]
+        DM[Donation Management]
+        IM[Inventory Management]
+        RM[Reports & Analytics]
+        SM[Settings Management]
+    end
+    
+    subgraph "Admin APIs"
+        UA[Users API]
+        PA[Payments API]
+        DA[Donations API]
+        IA[Inventory API]
+        RA[Reports API]
+    end
+    
+    OV --> UA
+    UM --> UA
+    PM --> PA
+    DM --> DA
+    IM --> IA
+    RM --> RA
+    SM --> UA
+```
+
+### **Admin Panel Sections**
+
+#### **1. Overview Dashboard**
+- System statistics & KPIs
+- Recent transactions overview
+- Active users metrics
+- Revenue analytics
+
+#### **2. User Management**
+- User CRUD operations
+- Membership level management
+- Account status control
+- User activity tracking
+
+#### **3. Payment Management**
+- Transaction history
+- Payment method analytics
+- Revenue reports
+- Refund processing
+
+#### **4. Donation Management**
+- Monetary donation tracking
+- Item donation inventory
+- Donor recognition system
+- Impact reporting
+
+#### **5. Inventory Management**
+- Tools & equipment tracking
+- Component stock management
+- Maintenance scheduling
+- Low stock alerts
+
+#### **6. Reports & Analytics**
+- Financial reports
+- Usage analytics
+- User engagement metrics
+- Donation impact reports
+
+#### **7. Settings Management**
+- Service pricing configuration
+- System parameters
+- Email templates
+- Backup management
+
+---
+
+## �💳 Payment Processing Architecture
 
 ### **Payment Flow**
 ```mermaid
@@ -260,13 +465,16 @@ graph TD
         CS[Current Section]
         CU[Current User]
         SS[Selected Service]
+        AS[Admin Session]
     end
     
     subgraph "Component Communication"
         D[Dashboard] --> CS
         L[Login] --> CU
+        AL[Admin Login] --> AS
         SP[Service Preview] --> SS
         PP[Payment Page] --> API[Payment API]
+        AP[Admin Panel] --> AAPI[Admin APIs]
     end
     
     subgraph "Navigation Flow"
@@ -274,6 +482,7 @@ graph TD
         CS --> |payments| PP
         CS --> |service-preview| SP
         CS --> |community| L
+        AS --> |admin| AP
     end
 ```
 
@@ -281,6 +490,7 @@ graph TD
 - `currentSection`: Controls which page/component is displayed
 - `currentUser`: Stores authenticated user information
 - `selectedService`: Tracks which service user wants to use
+- `adminSession`: Manages admin authentication state
 
 ---
 
@@ -290,20 +500,76 @@ graph TD
 - **Framework**: Next.js 15.5.4 (React 19)
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS
-- **UI Components**: Shadcn/ui
+- **UI Components**: Custom component library with shadcn/ui
 - **Icons**: Lucide React
+- **State Management**: React Hooks (useState, useEffect)
 
 ### **Backend**
-- **Runtime**: Node.js
+- **Runtime**: Node.js 22+
 - **Framework**: Next.js API Routes
-- **Database**: MongoDB with Mongoose
-- **Authentication**: Custom JWT-like implementation
+- **Database**: MongoDB 7.0+
+- **ODM**: Mongoose 8.x
+- **Authentication**: Custom session-based auth
 
 ### **Development Tools**
 - **Package Manager**: npm
 - **Linting**: ESLint
-- **Type Checking**: TypeScript compiler
-- **Database Scripts**: Custom population scripts
+- **Code Formatting**: Prettier (implied)
+- **Build Tool**: Next.js Turbopack
+
+## 🚀 System Features & Capabilities
+
+### **Core Features**
+
+#### **Public Features**
+- 🏢 **Lab Information Display**: Interactive lab locations and services
+- 👥 **Community Access**: Guest browsing of available services
+- 📱 **Responsive Design**: Mobile-first responsive interface
+- 🔍 **Service Discovery**: Browse and preview all innovation services
+
+#### **User Features**
+- 🔐 **User Authentication**: Secure login and registration
+- 💳 **Payment Processing**: Comprehensive service payment forms
+- 📊 **Personal Dashboard**: Personalized user experience with name formatting
+- 🎯 **Service Selection**: Choose from 5 core innovation services
+- 💰 **Donation System**: Support the labs through monetary/item donations
+
+#### **Admin Features (admin_sorsogon only)**
+- 🛡️ **Secure Admin Access**: Restricted authentication for administrators
+- 📊 **System Overview**: Real-time statistics and metrics dashboard
+- 👤 **User Management**: CRUD operations for community members
+- 💸 **Payment Analytics**: Transaction tracking and financial reports
+- ❤️ **Donation Management**: Track monetary and item donations
+- 📦 **Inventory Control**: Tools and components stock management
+- 📈 **Advanced Reports**: 6 types of comprehensive analytics reports
+- ⚙️ **System Settings**: Configuration and pricing management
+
+### **Innovation Services**
+
+#### **1. 3D Printing Service**
+- **Features**: Multi-material support, quality selection, rush options
+- **Pricing**: ₱10-50/gram based on material and quality
+- **Payment Form**: `3DPrinterPaymentForm.tsx`
+
+#### **2. Document Printing**
+- **Features**: Multiple paper sizes, binding options, bulk pricing
+- **Pricing**: ₱2-5/page + premium options
+- **Payment Form**: `DocumentPrinterPaymentForm.tsx`
+
+#### **3. Soldering Station**
+- **Features**: Hourly rental, safety equipment included
+- **Pricing**: ₱10/hour
+- **Payment Form**: `SolderingPaymentForm.tsx`
+
+#### **4. Hardware Tools**
+- **Features**: Inventory tracking, hourly rates, condition monitoring
+- **Pricing**: Variable by tool
+- **Payment Form**: `ToolsComponentsPaymentForm.tsx`
+
+#### **5. Electronic Components**
+- **Features**: Stock management, bulk discounts, supplier tracking
+- **Pricing**: Variable by component
+- **Payment Form**: `ToolsComponentsPaymentForm.tsx`
 
 ---
 
@@ -320,6 +586,7 @@ graph TB
     subgraph "Backend Services"
         API[API Routes]
         AUTH[Authentication]
+        ADMIN[Admin APIs]
         DB[(MongoDB)]
     end
     
@@ -332,13 +599,15 @@ graph TB
     USER --> NEXTJS
     NEXTJS --> API
     API --> AUTH
+    API --> ADMIN
     API --> DB
     API --> EMAIL
 ```
 
 ### **Environment Configuration**
-- Development: Local MongoDB, Next.js dev server
-- Production: Cloud MongoDB, Vercel/similar hosting
+- **Development**: Local MongoDB, Next.js dev server
+- **Production**: Cloud MongoDB, Vercel/similar hosting
+- **Database**: MongoDB Atlas or self-hosted MongoDB
 
 ---
 
@@ -356,7 +625,7 @@ Login → Dashboard (Personalized) → Service Selection → Payment → Member 
 
 ### **3. Administrator Journey**
 ```
-Login → Admin Panel → Reports → User Management → System Configuration
+Admin Login → Admin Panel → Reports → User Management → Inventory Control → System Configuration
 ```
 
 ---
@@ -367,9 +636,96 @@ Login → Admin Panel → Reports → User Management → System Configuration
 - **Component Lazy Loading**: Dynamic imports for large components
 - **Database Indexing**: Optimized queries on user_id, email, timestamps
 - **Caching**: Static generation for service information
-- **Image Optimization**: Next.js automatic image optimization
+- **Error Handling**: Comprehensive error boundaries and graceful degradation
+- **Data Validation**: Client and server-side validation for all inputs
+
+### **Security Measures**
+- **Admin Access Control**: Hardcoded admin credentials for maximum security
+- **Input Sanitization**: All user inputs validated and sanitized
+- **Session Management**: Secure browser-based session storage
+- **API Rate Limiting**: Protection against abuse (recommended for production)
+- **Data Encryption**: Sensitive data protection in transit and at rest
 
 ### **Future Enhancements**
+- **Real-time Notifications**: WebSocket integration for live updates
+- **Advanced Analytics**: Machine learning insights for usage patterns
+- **Mobile Application**: React Native companion app
+- **Payment Gateway Integration**: Stripe/PayPal for online payments
+- **Multi-tenancy**: Support for multiple innovation lab locations
+- **Advanced Reporting**: Export capabilities (PDF, Excel)
+- **Inventory Automation**: IoT integration for real-time stock tracking
+
+---
+
+## 📚 Development Guidelines
+
+### **Code Organization**
+- **Component Structure**: Modular, reusable components with TypeScript
+- **API Design**: RESTful endpoints with consistent error handling
+- **Database Design**: Normalized collections with appropriate indexing
+- **Testing Strategy**: Unit tests for critical functions (recommended)
+
+### **Development Workflow**
+1. **Setup**: Clone repository, install dependencies
+2. **Database**: Run population scripts for test data
+3. **Development**: Use Next.js dev server with hot reload
+4. **Testing**: Manual testing across all user journeys
+5. **Deployment**: Build and deploy to production environment
+
+### **Key Commands**
+```bash
+npm install                 # Install dependencies
+npm run dev                # Start development server
+npm run build              # Build for production
+npm run populate:labs      # Populate database with lab data
+npm run lint               # Run ESLint
+```
+
+---
+
+## 🎯 Project Status & Roadmap
+
+### **Current Status (v1.0)**
+✅ **Core Functionality**: All basic features implemented and tested
+✅ **User Authentication**: Secure login system with personalized experience
+✅ **Payment Processing**: Complete payment forms for all 5 services
+✅ **Admin Panel**: Comprehensive administrative interface
+✅ **Database Integration**: Full CRUD operations across all collections
+✅ **Error Handling**: Robust error management and user feedback
+✅ **Responsive Design**: Mobile-first interface across all components
+
+### **Upcoming Features (v1.1)**
+🔄 **Real-time Updates**: Live data refresh in admin panel
+🔄 **Enhanced Analytics**: Advanced reporting and data visualization
+🔄 **Backup System**: Automated database backup solutions
+🔄 **Email Integration**: Notification system for transactions
+🔄 **API Documentation**: Comprehensive API documentation
+
+### **Long-term Vision (v2.0)**
+🎯 **Multi-location Support**: Expand to multiple innovation labs
+🎯 **Mobile Application**: Native mobile app development
+🎯 **Payment Gateway**: Online payment processing
+🎯 **IoT Integration**: Smart inventory management
+🎯 **Community Features**: User forums and collaboration tools
+
+---
+
+## 📞 Contact & Support
+
+### **Development Team**
+- **Project**: Sorsogon Community Innovation Labs Management System
+- **Technology Stack**: Next.js 15, MongoDB, TypeScript
+- **Admin Access**: `admin_sorsogon` / `admin@sorsogonlabs.gov.ph`
+
+### **System Requirements**
+- **Node.js**: v18.0.0 or higher
+- **MongoDB**: v5.0 or higher
+- **Browser**: Modern browsers with JavaScript enabled
+- **Network**: Internet connection for external services
+
+---
+
+*This architecture document reflects the current state of the Sorsogon Community Innovation Labs management system as of October 2025. The system provides comprehensive management capabilities for innovation lab operations, user management, and administrative oversight.*
 - **Real-time Updates**: WebSocket integration for live pricing
 - **Mobile App**: React Native companion app
 - **Advanced Analytics**: Detailed usage reports and insights
