@@ -4,7 +4,7 @@ import { Dashboard } from '@/components/Dashboard';
 import { PaymentServiceType } from '@/types';
 import { DonationForm } from '@/components/DonationForm';
 import { PaymentPage } from '@/components/PaymentPage';
-import { ReportsSection } from '@/components/ReportSection';
+import { ReportSection } from '@/components/ReportSection';
 import { AdminPanel } from '@/components/AdminPanel';
 import { ServicePreview } from '@/components/ServicePreview';
 import { LoginPage } from '@/components/LoginPage';
@@ -76,7 +76,7 @@ export default function App() {
   const mapped = (serviceToPaymentMap[selectedService] ?? (selectedService === 'donation' ? 'donation' : undefined)) as PaymentServiceType | 'donation' | undefined;
   return <PaymentPage onBack={handleBackToDashboard} initialService={mapped} />;
     case 'reports':
-      return <ReportsSection onBack={handleBackToDashboard} />;
+      return <ReportSection onBack={handleBackToDashboard} />;
     case 'admin':
       return <AdminPanel onBack={handleBackToDashboard} />;
     case 'community':
