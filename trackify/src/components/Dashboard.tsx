@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from './ui/card';
 import Image from "next/image";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from './ui/carousel';
 import { Printer, FileText, Zap, Wrench, Microchip, Sparkles } from 'lucide-react';
+import { AdminLogin, isAdminAuthenticated } from './AdminLogin';
 
 interface DashboardProps {
   username: string;
@@ -12,7 +14,28 @@ interface DashboardProps {
 }
 
 export function Dashboard({ username, onNavigate, onLogout, onServiceSelect }: DashboardProps) {
+  const [showAdminLogin, setShowAdminLogin] = useState(false);
   
+  const handleAdminClick = () => {
+    // Check if already authenticated
+    if (isAdminAuthenticated()) {
+      onNavigate('admin');
+    } else {
+      setShowAdminLogin(true);
+    }
+  };
+
+  const handleAdminLogin = (success: boolean) => {
+    setShowAdminLogin(false);
+    if (success) {
+      onNavigate('admin');
+    }
+  };
+
+  const handleCloseAdminLogin = () => {
+    setShowAdminLogin(false);
+  };
+
   // Format username for display (convert maria_santos to Maria Santos)
   const formatDisplayName = (username: string) => {
     if (!username) return 'Guest User';
@@ -252,7 +275,7 @@ export function Dashboard({ username, onNavigate, onLogout, onServiceSelect }: D
             </Button>
 
             <Button 
-              onClick={() => onNavigate('admin')}
+              onClick={handleAdminClick}
               className="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 
                          text-white border-0 rounded-lg h-14 font-semibold transition-all duration-300 
                          hover:shadow-lg hover:shadow-red-500/30 hover:scale-105"
@@ -281,6 +304,14 @@ export function Dashboard({ username, onNavigate, onLogout, onServiceSelect }: D
           </div>
         </div>
       </div>
+
+      {/* Admin Login Modal */}
+      {showAdminLogin && (
+        <AdminLogin
+          onLogin={handleAdminLogin}
+          onClose={handleCloseAdminLogin}
+        />
+      )}
     </div>
   );
 }
