@@ -1,12 +1,19 @@
 import mongoose, { Document, Schema } from 'mongoose';
 import { nanoid } from 'nanoid';
 
+export interface IDonatedItem {
+  name: string;
+  quantity: number;
+  description?: string;
+}
+
 export interface IDonation extends Document {
   donation_id: string;
   donorName: string;
   type: 'monetary' | 'item';
   amount?: number; // Only for monetary donations
-  itemDescription?: string; // Only for item donations
+  items?: IDonatedItem[]; // Only for item donations
+  itemDescription?: string; // Legacy field for backward compatibility
   dateReceived: Date;
 }
 
@@ -31,9 +38,24 @@ const DonationSchema = new Schema<IDonation>({
     required: function(this: IDonation) { return this.type === 'monetary'; },
     min: 0
   },
+  items: [{
+    name: {
+      type: String,
+      required: true
+    },
+    quantity: {
+      type: Number,
+      required: true,
+      min: 1
+    },
+    description: {
+      type: String,
+      required: false
+    }
+  }],
   itemDescription: {
     type: String,
-    required: function(this: IDonation) { return this.type === 'item'; }
+    required: false // Made optional for backward compatibility
   },
   dateReceived: {
     type: Date,
