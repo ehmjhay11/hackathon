@@ -11,6 +11,7 @@
     "test:db": "node scripts/test-db-simple.cjs",
     "init:data": "node scripts/init-simple.cjs",
     "reset:db": "node scripts/reset-and-populate.cjs",
+    "populate:labs": "node scripts/populate-innovation-labs.cjs",
     "migrate:collections": "node scripts/migrate-db.cjs",
     "db:help": "node scripts/db-help.js"
   },
