@@ -28,19 +28,6 @@ export function ReportSection({ onBack }: ReportSectionProps) {
     { date: "2025-10-07", donor: "George", item: "Chairs", quantity: "10" },
   ];
 
-  const serviceUsageRecords = [
-    { service: "3D Printer", date: "2025-10-02" },
-    { service: "3D Printer", date: "2025-10-05" },
-    { service: "Printer", date: "2025-10-01" },
-    { service: "Printer", date: "2025-09-15" },
-    { service: "Soldering", date: "2025-09-10" },
-    { service: "Tools", date: "2025-08-20" },
-    { service: "Components", date: "2025-10-03" },
-    { service: "Components", date: "2025-09-30" },
-    { service: "Components", date: "2025-10-04" },
-    { service: "Printer", date: "2025-10-06" },
-  ];
-
   const COLORS = ["#ff8c00", "#4a5568", "#3182ce", "#38a169", "#e53e3e"];
   const [period, setPeriod] = useState<"thisMonth" | "all">("thisMonth");
   const [donationView, setDonationView] = useState<"money" | "items">("money");
@@ -51,6 +38,19 @@ export function ReportSection({ onBack }: ReportSectionProps) {
 
   // Pie chart data
   const pieData = useMemo(() => {
+    const serviceUsageRecords = [
+      { service: "3D Printer", date: "2025-10-02" },
+      { service: "3D Printer", date: "2025-10-05" },
+      { service: "Printer", date: "2025-10-01" },
+      { service: "Printer", date: "2025-09-15" },
+      { service: "Soldering", date: "2025-09-10" },
+      { service: "Tools", date: "2025-08-20" },
+      { service: "Components", date: "2025-10-03" },
+      { service: "Components", date: "2025-09-30" },
+      { service: "Components", date: "2025-10-04" },
+      { service: "Printer", date: "2025-10-06" },
+    ];
+
     const now = new Date();
     const filtered = serviceUsageRecords.filter((r) => {
       if (period === "all") return true;
@@ -70,17 +70,19 @@ export function ReportSection({ onBack }: ReportSectionProps) {
     <div className="min-h-screen bg-[#2d3748]">
       <div className="max-w-6xl mx-auto p-8">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center justify-between mb-4">
           <div className="flex items-center">
+            {/* Back Button */}
             <Button
-              variant="ghost"
               onClick={onBack}
-              className="mr-4 text-white hover:text-[#ff8c00] hover:bg-transparent"
+              className="bg-transparent hover:bg-[#4a5568] text-white border border-gray-600 rounded-md flex items-center gap-2 px-3 py-2"
             >
-              <ArrowLeft className="h-4 w-4 mr-2" />
+              <ArrowLeft className="w-4 h-4" />
               Back to Dashboard
             </Button>
-            <div className="flex items-center">
+          </div>
+
+          <div className="flex items-center">
               <Image
                 src="/img/logo.png"
                 alt="Sorsogon Community Innovation Labs"
@@ -89,14 +91,9 @@ export function ReportSection({ onBack }: ReportSectionProps) {
                 className="w-8 h-8 mr-3"
               />
               <div className="text-left">
-                <div className="text-white text-sm">SORSOGON COMMUNITY LABS</div>
+                <div className="text-white text-sm">SORSOGON COMMUNITY INNOVATIONS LABS</div>
               </div>
             </div>
-          </div>
-
-          <div className="bg-[#4a5568] px-4 py-2 rounded">
-            <span className="text-white text-sm">Reports Section</span>
-          </div>
         </div>
 
         {/* Pie Chart */}
