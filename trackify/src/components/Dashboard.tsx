@@ -13,6 +13,32 @@ interface DashboardProps {
 
 export function Dashboard({ username, onNavigate, onLogout, onServiceSelect }: DashboardProps) {
   
+  // Format username for display (convert maria_santos to Maria Santos)
+  const formatDisplayName = (username: string) => {
+    if (!username) return 'Guest User';
+    return username
+      .split('_')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
+
+  // Determine user status and membership display
+  const getUserStatus = (username: string) => {
+    if (!username) return { displayName: 'Guest User', status: 'guest' };
+    
+    const displayName = formatDisplayName(username);
+    
+    // Check if admin user
+    if (username.includes('admin')) {
+      return { displayName, status: 'Administrator' };
+    }
+    
+    // For other users, show as community member
+    return { displayName, status: 'Community Member' };
+  };
+
+  const userInfo = getUserStatus(username);
+  
   const services = [
     { 
       id: "3d-printer", 
@@ -82,31 +108,55 @@ export function Dashboard({ username, onNavigate, onLogout, onServiceSelect }: D
         {/* User Info and Logout - Top Right (responsive) */}
         <div className="flex flex-col md:flex-row items-center gap-3 md:gap-4 w-full md:w-auto">
           <div className="text-center md:text-right">
-            <div className="text-white text-sm">Welcome back,</div>
-            <div className="text-[#ff8c00] font-semibold">{username || 'Guest User'}</div>
+            <div className="text-white text-sm">
+              {username ? `Welcome back,` : 'Welcome,'}
+            </div>
+            <div className="text-[#ff8c00] font-semibold">{userInfo.displayName}</div>
+            {username && (
+              <div className="text-gray-300 text-xs">{userInfo.status}</div>
+            )}
           </div>
-          <Button 
-            onClick={onLogout}
-            aria-label="Logout"
-            className="bg-[#ff8c00] hover:bg-[#e67e00] text-white rounded-md px-6 py-3 md:py-2 font-medium transition-colors w-full md:w-auto focus:outline-none focus:ring-2 focus:ring-[#ff8c00]/60"
-          >
-            Logout
-          </Button>
+          {username ? (
+            <Button 
+              onClick={onLogout}
+              aria-label="Logout"
+              className="bg-[#ff8c00] hover:bg-[#e67e00] text-white rounded-md px-6 py-3 md:py-2 font-medium transition-colors w-full md:w-auto focus:outline-none focus:ring-2 focus:ring-[#ff8c00]/60"
+            >
+              Logout
+            </Button>
+          ) : (
+            <Button 
+              onClick={() => onNavigate('community')}
+              aria-label="Login"
+              className="bg-[#ff8c00] hover:bg-[#e67e00] text-white rounded-md px-6 py-3 md:py-2 font-medium transition-colors w-full md:w-auto focus:outline-none focus:ring-2 focus:ring-[#ff8c00]/60"
+            >
+              Login
+            </Button>
+          )}
         </div>
       </div>
 
       <div className="max-w-6xl mx-auto px-4">
         {/* Header */}
-        <div className="text-center mb-16">
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
-              TOOL SERVICES
+        <div className="text-center mb-10">
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <Sparkles className="h-6 w-6 text-[#ff8c00] animate-pulse" />
+            <h1 className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-white via-[#ff8c00] to-white bg-clip-text text-transparent">
+              INNOVATION LABS SERVICES
             </h1>
+            <Sparkles className="h-6 w-6 text-[#ff8c00] animate-pulse" />
           </div>
-          <p className="text-gray-300 text-lg mb-12 max-w-2xl mx-auto">
-            Access professional-grade equipment and tools for your innovation projects. 
-            From 3D printing to electronics, we have everything you need.
+          <div className="bg-gradient-to-r from-transparent via-[#ff8c00]/20 to-transparent h-px w-24 mx-auto mb-4"></div>
+          <p className="text-gray-300 text-base md:text-lg mb-3 max-w-2xl mx-auto leading-relaxed">
+            Unlock your creative potential with state-of-the-art equipment and professional-grade tools. 
+            From rapid prototyping to precision manufacturing.
           </p>
+          <div className="flex flex-wrap justify-center gap-2 text-xs text-[#ff8c00] mb-6">
+            <span className="bg-[#ff8c00]/10 px-2 py-1 rounded-full border border-[#ff8c00]/30">• Professional Equipment</span>
+            <span className="bg-[#ff8c00]/10 px-2 py-1 rounded-full border border-[#ff8c00]/30">• Expert Guidance</span>
+            <span className="bg-[#ff8c00]/10 px-2 py-1 rounded-full border border-[#ff8c00]/30">• Affordable Rates</span>
+            <span className="bg-[#ff8c00]/10 px-2 py-1 rounded-full border border-[#ff8c00]/30">• Community Access</span>
+          </div>
           
           {/* Service Cards Carousel */}
           <div className="mb-12">
@@ -216,7 +266,7 @@ export function Dashboard({ username, onNavigate, onLogout, onServiceSelect }: D
                          text-white border-0 rounded-lg h-14 font-semibold transition-all duration-300 
                          hover:shadow-lg hover:shadow-green-500/20 hover:scale-105"
             >
-              MEMORY
+              REPORTS
             </Button>
 
             <Button 

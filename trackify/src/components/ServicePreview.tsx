@@ -1,8 +1,7 @@
 import { Button } from './ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { ArrowLeft, Clock, Info } from 'lucide-react';
+import { ArrowLeft, Clock, CheckCircle, Star, Info } from 'lucide-react';
 import Image from "next/image";
-import { Printer, FileText, Zap, Wrench, Microchip, LucideIcon } from 'lucide-react';
+import { Printer, FileText, Zap, Wrench, Microchip } from 'lucide-react';
 
 interface ServicePreviewProps {
   serviceId: string;
@@ -14,205 +13,247 @@ export function ServicePreview({ serviceId, onBack, onCheckout }: ServicePreview
   const serviceDetails = {
     '3d-printer': {
       title: '3D PRINTER',
-      icon: '🖨️',
-      basePrice: 5,
-      unit: 'hour',
+      icon: Printer,
+      gradient: 'from-blue-500 to-cyan-600',
+      basePrice: '₱5/hour + materials',
       description: 'Professional 3D printing with PLA/ABS filaments. Perfect for prototypes, models, and custom parts.',
-      features: ['PLA and ABS materials', 'High precision printing', 'Design assistance'],
+      features: ['PLA and ABS materials', 'High precision printing', 'Design assistance', 'Post-processing support'],
       estimatedTime: '2-6 hours',
+      specs: [
+        { label: 'Build Volume', value: '220×220×250mm' },
+        { label: 'Layer Resolution', value: '0.1-0.3mm' },
+        { label: 'Filament Types', value: 'PLA, ABS, PETG' },
+        { label: 'Support Material', value: 'Available' }
+      ],
       additionalCosts: [
-        { item: 'PLA Material', price: 5, unit: '100g' },
-        { item: 'ABS Material', price: 7, unit: '100g' },
-        { item: 'Design Review', price: 20, unit: 'session' }
+        { item: 'PLA Material', price: '₱1.2/g', description: 'High-quality PLA filament' },
+        { item: 'ABS Material', price: '₱1.35/g', description: 'Durable ABS filament' },
+        { item: 'Design Review', price: '₱300/session', description: 'Professional design consultation' }
       ]
     },
     'printer': {
-      title: 'PRINTER',
-      icon: '🖨',
-      basePrice: 2,
-      unit: 'page',
+      title: 'DOCUMENT PRINTER',
+      icon: FileText,
+      gradient: 'from-green-500 to-emerald-600',
+      basePrice: '₱2-5/page',
       description: 'High-quality document printing, scanning, and copying services for all your paper needs.',
-      features: ["Color & B&W printing", "Various paper sizes", "Fast processing"],
+      features: ['Color & B&W printing', 'Multiple paper sizes', 'Fast processing', 'Scanning services'],
       estimatedTime: '5-15 minutes',
+      specs: [
+        { label: 'Print Quality', value: 'Up to 1200 DPI' },
+        { label: 'Paper Sizes', value: 'A4, A3, Letter' },
+        { label: 'Color Options', value: 'Full color, B&W' },
+        { label: 'Capacity', value: 'Bulk printing available' }
+      ],
       additionalCosts: [
-        { item: 'Color Printing', price: 0.75, unit: 'page' },
-        { item: 'Premium Paper', price: 0.25, unit: 'page' },
-        { item: 'Binding Service', price: 2, unit: 'document' }
+        { item: 'Color Printing', price: '₱5/page', description: 'Full color documents' },
+        { item: 'Premium Paper', price: '₱2/page', description: 'High-quality paper stock' },
+        { item: 'Binding Service', price: '₱50/document', description: 'Professional binding' }
       ]
     },
     'soldering': {
-      title: 'SOLDERING',
-      icon: '🔧',
-      basePrice: 10,
-      unit: 'hour',
+      title: 'SOLDERING STATION',
+      icon: Zap,
+      gradient: 'from-yellow-500 to-orange-600',
+      basePrice: '₱10/hour',
       description: 'Professional electronic soldering and repair station with temperature control and safety equipment.',
-      features: ["Temperature control", "Safety equipment", "Component library"],
+      features: ['Temperature control', 'Safety equipment', 'Component library', 'Expert guidance'],
       estimatedTime: '1-4 hours',
+      specs: [
+        { label: 'Temperature Range', value: '200-450°C' },
+        { label: 'Station Type', value: 'Digital controlled' },
+        { label: 'Safety Features', value: 'Auto shutoff, ventilation' },
+        { label: 'Tools Included', value: 'Multiple tip sizes' }
+      ],
       additionalCosts: [
-        { item: 'Solder Wire', price: 3, unit: 'roll' },
-        { item: 'Flux', price: 2, unit: 'bottle' },
-        { item: 'Desoldering Braid', price: 2, unit: 'roll' }
+        { item: 'Solder Wire', price: '₱150/roll', description: 'Lead-free solder wire' },
+        { item: 'Flux', price: '₱80/bottle', description: 'Rosin flux paste' },
+        { item: 'Desoldering Braid', price: '₱120/roll', description: 'Copper desoldering wick' }
       ]
     },
     'tools': {
       title: 'HARDWARE TOOLS',
-      icon: '🛠️',
-      basePrice: 5,
-      unit: 'hour',
-      description: 'Complete workshop with precision tools, measuring instruments, and mechanical equitpmen.',
-      features: ["Precision instruments", "Power tools", "Safety gear included"],
+      icon: Wrench,
+      gradient: 'from-green-500 to-emerald-600',
+      basePrice: '₱15/hour',
+      description: 'Complete workshop with precision tools, measuring instruments, and mechanical equipment.',
+      features: ['Precision instruments', 'Power tools', 'Safety gear included', 'Tool training available'],
       estimatedTime: '1-8 hours',
+      specs: [
+        { label: 'Tool Categories', value: 'Hand, power, precision' },
+        { label: 'Measurement Tools', value: 'Calipers, multimeters' },
+        { label: 'Safety Equipment', value: 'Goggles, gloves, aprons' },
+        { label: 'Work Space', value: 'Dedicated bench space' }
+      ],
       additionalCosts: [
-        { item: 'Drill Bits Set', price: 3, unit: 'set' },
-        { item: 'Sandpaper Pack', price: 2, unit: 'pack' },
-        { item: 'Safety Gloves', price: 1, unit: 'pair' }
+        { item: 'Drill Bits Set', price: '₱200/set', description: 'HSS drill bit set' },
+        { item: 'Sandpaper Pack', price: '₱100/pack', description: 'Assorted grits' },
+        { item: 'Safety Equipment', price: '₱150/set', description: 'Personal protective equipment' }
       ]
     },
     'components': {
-      title: 'COMPONENTS',
-      icon: '⚡',
-      basePrice: 50,
-      unit: 'piece',
-      description: 'Arduino boards, sensors, and electronic components for your projects.',
-      features: ["Arduino ecosystem", "Sensors & modules", "Project guidance"],
+      title: 'ELECTRONIC COMPONENTS',
+      icon: Microchip,
+      gradient: 'from-indigo-500 to-purple-600',
+      basePrice: '₱50-2000/item',
+      description: 'Arduino boards, sensors, microcontrollers, and electronic components for your innovation projects.',
+      features: ['Arduino ecosystem', 'Sensors & modules', 'Project guidance', 'Bulk discounts available'],
       estimatedTime: 'Immediate',
+      specs: [
+        { label: 'Board Types', value: 'Arduino, ESP32, Raspberry Pi' },
+        { label: 'Sensor Categories', value: 'Temperature, motion, distance' },
+        { label: 'Components', value: 'Resistors, capacitors, LEDs' },
+        { label: 'Documentation', value: 'Tutorials and guides included' }
+      ],
       additionalCosts: [
-        { item: 'Arduino Uno', price: 25, unit: 'board' },
-        { item: 'Sensor Kit', price: 15, unit: 'kit' },
-        { item: 'Jumper Wires', price: 3, unit: 'pack' }
+        { item: 'Arduino Uno R3', price: '₱680/board', description: 'Microcontroller development board' },
+        { item: 'Sensor Kit', price: '₱450/kit', description: 'Assorted sensors for projects' },
+        { item: 'Jumper Wires', price: '₱120/pack', description: 'Male-to-male/female connectors' }
       ]
     }
   };
 
   const service = serviceDetails[serviceId as keyof typeof serviceDetails];
 
-  const iconMap: Record<string, LucideIcon | undefined> = {
-    '3d-printer': Printer,
-    'printer': FileText,
-    'soldering': Wrench,
-    'tools': Zap,
-    'components': Microchip,
-  };
-
   if (!service) {
-    return <div>Service not found</div>;
+    return (
+      <div className="min-h-screen bg-[#2d3748] flex items-center justify-center">
+        <div className="text-white text-xl">Service not found</div>
+      </div>
+    );
   }
 
+  const IconComponent = service.icon;
+
   return (
-    <div className="min-h-screen bg-[#2d3748]">
-      <div className="max-w-4xl mx-auto p-8">
-        {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <Button
-            onClick={onBack}
-            className="bg-transparent hover:bg-[#4a5568] text-white border border-gray-600 rounded-md flex items-center gap-2 px-3 py-2"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Dashboard
-          </Button>
-          
-          <div className="flex items-center">
-            <Image
-                src="/img/logo.svg"
-                alt="Sorsogon Community Innovation Labs"
-                width={32}
-                height={32}
-                className="w-8 h-8 mr-3"
-            />
-            <div className="text-left">
-              <div className="text-white text-sm">SORSOGON COMMUNITY LABS</div>
+    <div className="min-h-screen bg-[#2d3748] text-white">
+      {/* Header - Consistent with Dashboard */}
+      <div className="bg-[#1a202c] shadow-lg">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            <div className="flex items-center">
+              <Image
+                src="/file.svg"
+                alt="Innovation Labs Logo"
+                width={36}
+                height={36}
+                className="mr-3"
+              />
+              <div>
+                <h1 className="text-xl font-bold text-white">Innovation Labs</h1>
+                <p className="text-[#ff8c00] text-xs">Service Details</p>
+              </div>
+            </div>
+            
+            <Button
+              variant="outline"
+              onClick={onBack}
+              className="flex items-center space-x-2 bg-transparent border-[#ff8c00] text-[#ff8c00] hover:bg-[#ff8c00] hover:text-white transition-colors text-sm px-3 py-2"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              <span>Back to Services</span>
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        {/* Service Hero Section */}
+        <div className={`bg-gradient-to-r ${service.gradient} rounded-xl p-6 mb-6 shadow-lg`}>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <div className="bg-white/20 p-3 rounded-lg">
+                <IconComponent className="h-8 w-8 text-white" />
+              </div>
+              <div>
+                <h2 className="text-2xl font-bold text-white mb-2">{service.title}</h2>
+                <p className="text-white/90 text-base mb-3">{service.description}</p>
+                <div className="flex items-center space-x-4">
+                  <div className="flex items-center space-x-2">
+                    <Star className="h-4 w-4 text-white" />
+                    <span className="text-white font-semibold text-sm">{service.basePrice}</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Clock className="h-4 w-4 text-white" />
+                    <span className="text-white text-sm">{service.estimatedTime}</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* Service Details */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Service Info */}
-          <Card className="bg-[#4a5568] border-gray-600">
-            <CardHeader>
-              <CardTitle className="flex items-center text-white">
-                {/* Icon container styled like dashboard */}
-                <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center mb-2 group-hover:scale-110 transition-transform duration-300 mr-3">
-                  {(() => {
-                    const IconComponent = iconMap[serviceId];
-                    if (IconComponent) {
-                      return <IconComponent className="w-6 h-6 text-white" />;
-                    }
-                    return <span className="text-2xl">{service.icon}</span>;
-                  })()}
-                </div>
-                {service.title}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <p className="text-gray-300">{service.description}</p>
-              
-              <div className="space-y-3">
-                <div className="flex items-center text-white">
-                  <span className="h-4 w-4 mr-2 text-[#ff8c00] flex items-center justify-center">₱</span>
-                  <span>Base Price: ₱{service.basePrice} per {service.unit}</span>
-                </div>
-                <div className="flex items-center text-white">
-                  <Clock className="h-4 w-4 mr-2 text-[#ff8c00]" />
-                  <span>Estimated Time: {service.estimatedTime}</span>
-                </div>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Service Details */}
+          <div className="space-y-4">
+            {/* Features */}
+            <div className="bg-[#1a202c] rounded-xl p-4 shadow-lg">
+              <h3 className="text-lg font-semibold text-white mb-3 flex items-center">
+                <CheckCircle className="h-4 w-4 mr-2 text-[#ff8c00]" />
+                Features & Benefits
+              </h3>
+              <div className="grid grid-cols-1 gap-2">
+                {service.features.map((feature, index) => (
+                  <div key={index} className="flex items-center space-x-3">
+                    <div className="w-1.5 h-1.5 bg-[#ff8c00] rounded-full" />
+                    <span className="text-gray-300 text-sm">{feature}</span>
+                  </div>
+                ))}
               </div>
+            </div>
 
-              <div>
-                <h4 className="text-white mb-2 flex items-center">
-                  <Info className="h-4 w-4 mr-2 text-[#ff8c00]" />
-                  Features Included:
-                </h4>
-                <ul className="text-gray-300 space-y-1">
-                  {service.features.map((feature, index) => (
-                    <li key={index} className="flex items-center">
-                      <span className="w-2 h-2 bg-[#ff8c00] rounded-full mr-2"></span>
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
+            {/* Specifications */}
+            <div className="bg-[#1a202c] rounded-xl p-4 shadow-lg">
+              <h3 className="text-lg font-semibold text-white mb-3 flex items-center">
+                <Info className="h-4 w-4 mr-2 text-[#ff8c00]" />
+                Specifications
+              </h3>
+              <div className="space-y-2">
+                {service.specs.map((spec, index) => (
+                  <div key={index} className="flex justify-between items-center py-1.5 border-b border-gray-600 last:border-b-0">
+                    <span className="text-gray-300 text-sm">{spec.label}</span>
+                    <span className="text-white font-medium text-sm">{spec.value}</span>
+                  </div>
+                ))}
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
 
           {/* Pricing & Checkout */}
-          <Card className="bg-[#4a5568] border-gray-600">
-            <CardHeader>
-              <CardTitle className="text-white">Pricing & Add-ons</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="bg-[#2d3748] p-4 rounded-lg">
-                <div className="text-center mb-4">
-                  <div className="text-2xl text-[#ff8c00] mb-1">₱{service.basePrice}</div>
-                  <div className="text-gray-300">per {service.unit}</div>
-                </div>
+          <div className="space-y-4">
+            {/* Base Pricing */}
+            <div className="bg-[#1a202c] rounded-xl p-4 shadow-lg">
+              <h3 className="text-lg font-semibold text-white mb-3">Base Pricing</h3>
+              <div className="bg-[#2d3748] rounded-lg p-3 mb-3">
+                <div className="text-xl font-bold text-[#ff8c00] mb-1">{service.basePrice}</div>
+                <div className="text-gray-300 text-xs">Starting rate for {service.title.toLowerCase()}</div>
               </div>
+            </div>
 
-              <div>
-                <h4 className="text-white mb-3">Optional Add-ons:</h4>
-                <div className="space-y-2">
-                  {service.additionalCosts.map((cost, index) => (
-                    <div key={index} className="flex justify-between items-center text-sm">
-                      <span className="text-gray-300">{cost.item}</span>
-                      <span className="text-white">₱{cost.price}/{cost.unit}</span>
+            {/* Additional Costs */}
+            <div className="bg-[#1a202c] rounded-xl p-4 shadow-lg">
+              <h3 className="text-lg font-semibold text-white mb-3">Additional Options</h3>
+              <div className="space-y-2">
+                {service.additionalCosts.map((cost, index) => (
+                  <div key={index} className="flex justify-between items-center p-2.5 bg-[#2d3748] rounded-lg">
+                    <div>
+                      <div className="text-white font-medium text-sm">{cost.item}</div>
+                      <div className="text-gray-400 text-xs">{cost.description}</div>
                     </div>
-                  ))}
-                </div>
+                    <span className="text-[#ff8c00] font-semibold text-sm">{cost.price}</span>
+                  </div>
+                ))}
               </div>
+            </div>
 
-              <div className="border-t border-gray-600 pt-4">
-                <Button 
-                  onClick={() => onCheckout(serviceId)}
-                  className="w-full bg-[#ff8c00] hover:bg-[#e67e00] text-white rounded-md h-12"
-                >
-                  Proceed to Checkout
-                </Button>
-                <p className="text-xs text-gray-400 text-center mt-2">
-                  Final pricing will be calculated during checkout
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+            {/* Checkout Button */}
+            <Button
+              onClick={() => onCheckout(serviceId)}
+              className="w-full bg-gradient-to-r from-[#ff8c00] to-[#ffa500] hover:from-[#ffa500] hover:to-[#ff8c00] text-white font-semibold py-3 text-base rounded-xl shadow-lg transition-all duration-300 transform hover:scale-105"
+            >
+              Proceed to Checkout
+            </Button>
+          </div>
         </div>
       </div>
     </div>

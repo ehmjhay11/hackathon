@@ -1,22 +1,23 @@
 import { useState } from 'react';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
-import { ArrowLeft, Printer, Zap, Wrench, Microchip, Heart } from 'lucide-react';
+import { ArrowLeft, Printer, Zap, Wrench, Microchip, Heart, FileText } from 'lucide-react';
 import Image from "next/image";
 import { PaymentServiceType } from '@/types';
 import { PrinterPaymentForm } from './payment/PrinterPaymentForm';
 import { SolderingPaymentForm } from './payment/SolderingPaymentForm';
 import { ToolsComponentsPaymentForm } from './payment/ToolsComponentsPaymentForm';
+import { DocumentPrinterPaymentForm } from './payment/DocumentPrinterPaymentForm';
 import { SimpleDonationForm } from './SimpleDonationForm';
 
 interface PaymentPageProps {
   onBack: () => void;
   // optional initial selected service so callers can deep-link directly to a form
-  initialService?: PaymentServiceType | 'donation' | null;
+  initialService?: PaymentServiceType | 'donation' | 'document-printer' | null;
 }
 
 export function PaymentPage({ onBack, initialService }: PaymentPageProps) {
-  const [selectedService, setSelectedService] = useState<PaymentServiceType | 'donation' | null>(initialService ?? null);
+  const [selectedService, setSelectedService] = useState<PaymentServiceType | 'donation' | 'document-printer' | null>(initialService ?? null);
 
   const services = [
     {
@@ -26,6 +27,14 @@ export function PaymentPage({ onBack, initialService }: PaymentPageProps) {
       description: 'Calculate cost based on filament usage and printing time',
       basePrice: 'Variable pricing',
       color: 'bg-blue-600 hover:bg-blue-700'
+    },
+    {
+      id: 'document-printer' as const,
+      title: 'DOCUMENT PRINTER',
+      icon: FileText,
+      description: 'High-quality document printing, scanning, and copying',
+      basePrice: '₱2-5/page',
+      color: 'bg-green-600 hover:bg-green-700'
     },
     {
       id: 'soldering-station' as PaymentServiceType,
@@ -61,7 +70,7 @@ export function PaymentPage({ onBack, initialService }: PaymentPageProps) {
     }
   ];
 
-  const handleServiceSelect = (serviceType: PaymentServiceType | 'donation') => {
+  const handleServiceSelect = (serviceType: PaymentServiceType | 'donation' | 'document-printer') => {
     setSelectedService(serviceType);
   };
 
@@ -73,6 +82,8 @@ export function PaymentPage({ onBack, initialService }: PaymentPageProps) {
     switch (selectedService) {
       case '3d-printer':
         return <PrinterPaymentForm onBack={handleBackToSelection} onComplete={onBack} />;
+      case 'document-printer':
+        return <DocumentPrinterPaymentForm onBack={handleBackToSelection} onComplete={onBack} />;
       case 'soldering-station':
         return <SolderingPaymentForm onBack={handleBackToSelection} onComplete={onBack} />;
       case 'tools':
@@ -122,47 +133,39 @@ export function PaymentPage({ onBack, initialService }: PaymentPageProps) {
       </div>
 
       {/* Service Selection */}
-      <div className="max-w-9xl mx-auto px-8">
-        <div className="text-center mb-10">
+      <div className="max-w-4xl mx-auto px-8">
+        <div className="text-center mb-8">
           <h1 className="text-white text-3xl font-bold mb-4">Select Payment Service</h1>
           <p className="text-gray-300 text-lg">Choose what you&apos;d like to pay for</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3">
+        <div className="grid grid-cols-3 gap-4 max-w-3xl mx-auto">
           {services.map((service) => {
             const IconComponent = service.icon;
             return (
               <Card
                 key={service.id}
-                className="bg-[#4a5568] border-gray-600 cursor-pointer hover:bg-[#5a6578] transition-all transform hover:scale-105 h-62"
+                className="bg-[#4a5568] border-gray-600 cursor-pointer hover:bg-[#5a6578] transition-all transform hover:scale-105 aspect-square"
                 onClick={() => handleServiceSelect(service.id)}
               >
-                <CardContent className="p-6 text-center h-full flex flex-col">
-                  <div className={`w-16 p-4 h-16 ${service.color} rounded-full flex items-center justify-center mx-auto mb-4 transition-colors`}>
-                    <IconComponent className="w-8 h-8 text-white" />
+                <CardContent className="p-3 text-center h-full flex flex-col justify-between">
+                  <div className={`w-10 h-10 ${service.color} rounded-full flex items-center justify-center mx-auto mb-2 transition-colors`}>
+                    <IconComponent className="w-5 h-5 text-white" />
                   </div>
                   
-                  <h3 className="text-white text-lg font-semibold mb-2">
-                    {service.title}
-                  </h3>
-                  
-                  <p
-                    className="text-gray-300 text-sm mb-4 flex-grow relative group cursor-default"
-                  >
-                    {service.description.length > 50
-                      ? (
-                        <>
-                          {service.description.substring(0, 50) + "..."}
-                          <span className="absolute bottom-full left-0 mb-1 hidden group-hover:block bg-gray-800 text-white text-xs rounded px-2 py-1 w-48">
-                            {service.description}
-                          </span>
-                        </>
-                      )
-                      : service.description}
-                  </p>
+                  <div className="flex-grow flex flex-col justify-center">
+                    <h3 className="text-white text-sm font-semibold mb-1">
+                      {service.title}
+                    </h3>
+                    
+                    <p className="text-gray-300 text-xs mb-2 line-clamp-2">
+                      {service.description.length > 40
+                        ? service.description.substring(0, 40) + "..."
+                        : service.description}
+                    </p>
+                  </div>
 
-                  
-                  <div className="text-[#ff8c00] font-semibold mt-auto">
+                  <div className="text-[#ff8c00] font-semibold text-xs">
                     {service.basePrice}
                   </div>
                 </CardContent>
@@ -172,10 +175,10 @@ export function PaymentPage({ onBack, initialService }: PaymentPageProps) {
         </div>
 
         {/* Additional Info */}
-        <div className="mt-5 text-center">
-          <div className="rounded-lg p-6 max-w-2xl mx-auto">
-            <h3 className="text-white text-lg font-semibold mb-3">Payment Information</h3>
-            <div className="text-gray-300 text-sm space-y-2">
+        <div className="mt-6 text-center">
+          <div className="rounded-lg p-4 max-w-xl mx-auto">
+            <h3 className="text-white text-base font-semibold mb-2">Payment Information</h3>
+            <div className="text-gray-300 text-xs space-y-1">
               <p>• All transactions are recorded with timestamps</p>
               <p>• Payment methods: Cash, Card, Bank Transfer</p>
               <p>• Contact the lab administrator for assistance</p>

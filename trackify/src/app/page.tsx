@@ -18,7 +18,7 @@ export default function App() {
   // map dashboard service ids to PaymentServiceType used by PaymentPage
   const serviceToPaymentMap: Record<string, string> = {
     '3d-printer': '3d-printer',
-    'printer': 'components', // document printer goes to components (purchase) or tools flow
+    'printer': 'document-printer', // document printer goes to new document printer payment form
     'soldering': 'soldering-station',
     'tools': 'tools',
     'components': 'components'
@@ -37,7 +37,11 @@ export default function App() {
     // clear any previously selected service so payments isn't pre-seeded
     setSelectedService('');
     setCurrentSection('dashboard');
+  };
 
+  const handleLoginSuccess = (username: string) => {
+    setCurrentUser(username);
+    setCurrentSection('dashboard'); // Ensure we go back to dashboard after login
   };
 
   const handleServiceSelect = (serviceId: string) => {
@@ -76,14 +80,14 @@ export default function App() {
       return <DonationForm onBack={handleBackToDashboard} />;
     case 'payments':
       // translate selectedService to PaymentServiceType or 'donation'
-  const mapped = (serviceToPaymentMap[selectedService] ?? (selectedService === 'donation' ? 'donation' : undefined)) as PaymentServiceType | 'donation' | undefined;
+  const mapped = (serviceToPaymentMap[selectedService] ?? (selectedService === 'donation' ? 'donation' : undefined)) as PaymentServiceType | 'donation' | 'document-printer' | undefined;
   return <PaymentPage onBack={handleBackToDashboard} initialService={mapped} />;
     case 'reports':
       return <ReportSection onBack={handleBackToDashboard} />;
     case 'admin':
       return <AdminPanel onBack={handleBackToDashboard} />;
     case 'community':
-      return <LoginPage onBack={handleBackToDashboard} onLogin={setCurrentUser} />;
+      return <LoginPage onBack={handleBackToDashboard} onLogin={handleLoginSuccess} />;
     default:
       return (
         <Dashboard

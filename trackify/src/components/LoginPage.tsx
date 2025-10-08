@@ -55,7 +55,10 @@ export function LoginPage({ onBack, onLogin }: LoginPageProps) {
       if (result.user) {
         // Store user info and redirect
         onLogin(result.user.username);
-        onBack(); // Return to dashboard as logged in user
+        // Set a small delay to ensure state is updated before navigation
+        setTimeout(() => {
+          onBack(); // Return to dashboard as logged in user
+        }, 100);
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Login failed');
