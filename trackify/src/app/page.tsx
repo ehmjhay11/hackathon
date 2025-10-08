@@ -34,7 +34,10 @@ export default function App() {
   };
 
   const handleBackToDashboard = () => {
+    // clear any previously selected service so payments isn't pre-seeded
+    setSelectedService('');
     setCurrentSection('dashboard');
+
   };
 
   const handleServiceSelect = (serviceId: string) => {
