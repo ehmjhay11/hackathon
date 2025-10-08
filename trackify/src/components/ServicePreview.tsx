@@ -1,6 +1,6 @@
 import { Button } from './ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { ArrowLeft, Clock, DollarSign, Info } from 'lucide-react';
+import { ArrowLeft, Clock, Info } from 'lucide-react';
 import Image from "next/image";
 import { Printer, FileText, Zap, Wrench, Microchip, LucideIcon } from 'lucide-react';
 
@@ -104,11 +104,10 @@ export function ServicePreview({ serviceId, onBack, onCheckout }: ServicePreview
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <Button
-            variant="ghost"
             onClick={onBack}
-            className="text-white hover:text-[#ff8c00] hover:bg-transparent"
+            className="bg-transparent hover:bg-[#4a5568] text-white border border-gray-600 rounded-md flex items-center gap-2 px-3 py-2"
           >
-            <ArrowLeft className="h-4 w-4 mr-2" />
+            <ArrowLeft className="w-4 h-4" />
             Back to Dashboard
           </Button>
           
@@ -150,8 +149,8 @@ export function ServicePreview({ serviceId, onBack, onCheckout }: ServicePreview
               
               <div className="space-y-3">
                 <div className="flex items-center text-white">
-                  <DollarSign className="h-4 w-4 mr-2 text-[#ff8c00]" />
-                  <span>Base Price: ${service.basePrice} per {service.unit}</span>
+                  <span className="h-4 w-4 mr-2 text-[#ff8c00] flex items-center justify-center">₱</span>
+                  <span>Base Price: ₱{service.basePrice} per {service.unit}</span>
                 </div>
                 <div className="flex items-center text-white">
                   <Clock className="h-4 w-4 mr-2 text-[#ff8c00]" />
@@ -184,7 +183,7 @@ export function ServicePreview({ serviceId, onBack, onCheckout }: ServicePreview
             <CardContent className="space-y-6">
               <div className="bg-[#2d3748] p-4 rounded-lg">
                 <div className="text-center mb-4">
-                  <div className="text-2xl text-[#ff8c00] mb-1">${service.basePrice}</div>
+                  <div className="text-2xl text-[#ff8c00] mb-1">₱{service.basePrice}</div>
                   <div className="text-gray-300">per {service.unit}</div>
                 </div>
               </div>
@@ -195,7 +194,7 @@ export function ServicePreview({ serviceId, onBack, onCheckout }: ServicePreview
                   {service.additionalCosts.map((cost, index) => (
                     <div key={index} className="flex justify-between items-center text-sm">
                       <span className="text-gray-300">{cost.item}</span>
-                      <span className="text-white">${cost.price}/{cost.unit}</span>
+                      <span className="text-white">₱{cost.price}/{cost.unit}</span>
                     </div>
                   ))}
                 </div>
